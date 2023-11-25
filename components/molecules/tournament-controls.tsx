@@ -14,6 +14,7 @@ interface TournamentControlsProps {
 const TournamentControls = ({ tournament }: TournamentControlsProps) => {
   const { toast } = useToast();
   const router = useRouter();
+
   const updateStatus = async (status: TournamentStatus) => {
     const { message } = await updateTournamentStatus(tournament.id, status);
     if (message === 'Success') {

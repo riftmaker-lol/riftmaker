@@ -84,6 +84,7 @@ export async function participateInTournament(riotId: string, tournamentId: stri
     });
 
     revalidatePath(`/tournament/[tournamentId]`, 'page');
+    revalidatePath(`/tournament/[tournamentId]/manage`, 'page');
 
     return { message: 'Success' };
   } catch (e) {

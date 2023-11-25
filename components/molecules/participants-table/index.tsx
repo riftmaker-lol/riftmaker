@@ -1,7 +1,7 @@
-import prisma from '@/lib/prisma';
+'use client';
+
 import { DataTable } from '../data-table';
 import { columns } from './columns';
-import { Tournament, User } from '@prisma/client';
 
 interface ParticipantsTableProps {
   data: ParticipantEntry[];
@@ -17,7 +17,7 @@ export interface ParticipantEntry {
   tournamentId: string;
 }
 
-const ParticipantsTable = async ({ data }: ParticipantsTableProps) => {
+const ParticipantsTable = ({ data }: ParticipantsTableProps) => {
   return <DataTable columns={columns} data={data} />;
 };
 
