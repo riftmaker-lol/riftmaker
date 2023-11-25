@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
-import NotLoggedIn from './not-loggedin';
+import NotLoggedIn from '../../../components/organisms/not-loggedin';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';

@@ -1,6 +1,6 @@
 'use client';
 
-import DiscordLogin from '@/components/discord-login';
+import DiscordLogin from '../molecules/discord-login';
 
 const NotLoggedIn = () => {
   return (

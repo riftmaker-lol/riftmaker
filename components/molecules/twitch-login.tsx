@@ -1,7 +1,7 @@
 import { signIn } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import { FaTwitch } from 'react-icons/fa';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 
 const TwitchLogin = () => {
   const { tournamentId } = useParams();
