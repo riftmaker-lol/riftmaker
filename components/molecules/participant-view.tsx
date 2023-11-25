@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -27,9 +27,19 @@ const ParticipantView = () => {
   });
 
   const { toast } = useToast();
+  const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    //
+    const tournamentId = values.tournamentId.split('/').pop();
+
+    if (!tournamentId) {
+      toast({
+        description: 'Invalid tournament ID',
+      });
+      return;
+    }
+
+    router.push(`/tournament/${tournamentId}`);
   };
 
   return (
