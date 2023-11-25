@@ -12,7 +12,12 @@ import {
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 import { DataTableColumnHeader } from '../data-table-column-header';
 import { toast, useToast } from '@/components/ui/use-toast';
-import { allowPlayerInTournament, banPlayer, kickPlayerFromTournament } from '@/app/tournament/[tournamentId]/actions';
+import {
+  allowPlayerInTournament,
+  banPlayer,
+  blacklistPlayerFromTournament,
+  removePlayerFromTournament,
+} from '@/app/tournament/[tournamentId]/actions';
 
 export const columns: ColumnDef<Omit<ParticipantEntry, 'tournamentId' | 'id'>>[] = [
   {
@@ -52,12 +57,27 @@ export const columns: ColumnDef<Omit<ParticipantEntry, 'tournamentId' | 'id'>>[]
         }
       };
 
-      const kickUser = async () => {
-        const { message } = await kickPlayerFromTournament(player.tournamentId, player.id);
+      const blacklistUser = async () => {
+        const { message } = await blacklistPlayerFromTournament(player.tournamentId, player.id);
         if (message === 'Success') {
           toast({
             title: 'Success',
-            description: 'User kicked from tournament',
+            description: 'User blacklisted from tournament',
+          });
+        } else {
+          toast({
+            title: 'Error',
+            description: message,
+          });
+        }
+      };
+
+      const removeUser = async () => {
+        const { message } = await removePlayerFromTournament(player.tournamentId, player.id);
+        if (message === 'Success') {
+          toast({
+            title: 'Success',
+            description: 'Player removed',
           });
         } else {
           toast({
@@ -94,10 +114,13 @@ export const columns: ColumnDef<Omit<ParticipantEntry, 'tournamentId' | 'id'>>[]
             {player.kicked ? (
               <DropdownMenuItem onClick={() => allowUser()}>Allow user</DropdownMenuItem>
             ) : (
-              <DropdownMenuItem onClick={() => kickUser()}>Kick user</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => blacklistUser()}>Blacklist user</DropdownMenuItem>
             )}
+            <DropdownMenuItem className="text-red-500" onClick={() => removeUser()}>
+              Remove player
+            </DropdownMenuItem>
             <DropdownMenuItem className="text-red-500" onClick={() => banUser()}>
-              Ban user
+              Ban player
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

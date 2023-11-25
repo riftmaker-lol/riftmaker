@@ -143,7 +143,7 @@ export async function updateTournamentStatus(tournamentId: string, status: Tourn
   }
 }
 
-export async function kickPlayerFromTournament(tournamentId: string, playerId: string) {
+export async function blacklistPlayerFromTournament(tournamentId: string, playerId: string) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -252,6 +252,63 @@ export async function allowPlayerInTournament(tournamentId: string, playerId: st
         },
         participants: {
           connect: {
+            id: playerId,
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/tournament/[tournamentId]/manage`, 'page');
+
+    return { message: 'Success' };
+  } catch (e) {
+    console.error(e);
+    return { message: (e as Error).message };
+  }
+}
+
+export async function removePlayerFromTournament(tournamentId: string, playerId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return { message: 'Not authenticated' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user?.email as string,
+      },
+    });
+
+    if (!user || !user.isAdmin) {
+      return { message: 'User not found or not an admin' };
+    }
+
+    const tounament = await prisma.tournament.findUnique({
+      where: {
+        id: tournamentId,
+      },
+      include: {
+        createdBy: true,
+      },
+    });
+
+    if (!tounament) {
+      return { message: 'Tournament not found' };
+    }
+
+    if (tounament.createdBy.id !== user.id) {
+      return { message: 'You are not the creator of this tournament' };
+    }
+
+    await prisma.tournament.update({
+      where: {
+        id: tournamentId,
+      },
+      data: {
+        participants: {
+          disconnect: {
             id: playerId,
           },
         },

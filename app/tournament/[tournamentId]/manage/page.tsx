@@ -48,7 +48,7 @@ const ManageTournament = async ({
       riotId: participant.riotId ?? '???',
       name: participant.name ?? 'Hassan',
       role: participant.role ?? 'N/A',
-      rank: participant.elo ?? 'Zrag',
+      rank: participant.elo === 'UNRANKED 0' ? 'Zrag' : participant.elo ?? 'Zrag',
       kicked,
       tournamentId,
     } as ParticipantEntry;
@@ -74,7 +74,7 @@ const ManageTournament = async ({
         </div>
 
         <div className="flex flex-col gap-4">
-          <h3 className="text-3xl font-semibold">Kicked Players:</h3>
+          <h3 className="text-3xl font-semibold">Blacklist Players:</h3>
           <ParticipantsTable
             data={tournament.kickedPlayers.map((participant) => mapParticipantToEntry(participant, true))}
           />

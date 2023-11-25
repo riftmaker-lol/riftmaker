@@ -41,6 +41,11 @@ export const validateRiotId = async (
 }> => {
   try {
     const { data } = await summonerData(riotId, 'EUW');
+
+    if (!data.lol.player) {
+      throw new Error('Please connect your Riot account to Mobalytics and update your account');
+    }
+
     const { queuesStats, roleStats } = data.lol.player;
 
     const role = roleStats.filters.actual.rolename as PlayerRole;
@@ -54,10 +59,11 @@ export const validateRiotId = async (
 
     return {
       riotId,
-      elo,
+      elo: elo === 'UNRANKED 0' ? 'Zrag' : elo,
       role,
     };
   } catch (e) {
+    console.error(e);
     throw new Error('Invalid Riot ID');
   }
 };
