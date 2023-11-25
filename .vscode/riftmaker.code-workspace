@@ -7,7 +7,7 @@
 	"settings": {
 		"editor.codeActionsOnSave": {
 			"source.fixAll.eslint": true,
-			"source.organizeImports": true
+			"source.organizeImports": false
 		},
 		"typescript.tsdk": "node_modules/typescript/lib",
 	}

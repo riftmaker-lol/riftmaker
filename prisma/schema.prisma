@@ -42,14 +42,19 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+
   isAdmin       Boolean   @default(false)
+  isBanned      Boolean   @default(false)
 
   riotId String?
   role   PlayerRole?
   elo    String?
 
   teams       TeamPlayer[]
-  tournaments Tournament[]
+  tournaments Tournament[] @relation("TournamentParticipants")
+
+  createdTournaments Tournament[] @relation("TournamentCreator")
+  kickedFromTournaments Tournament[] @relation("KickedPlayers")
 }
 
 model VerificationToken {
@@ -66,11 +71,13 @@ enum PlayerRole {
   MID
   ADC
   SUPPORT
+  FILL
 }
 
 enum TournamentStatus {
   CREATED
-  STARTED
+  ACCEPTING_PARTICIPANTS
+  READY
   FINISHED
 }
 
@@ -95,11 +102,16 @@ model Tournament {
 
   status TournamentStatus @default(CREATED)
 
-  teams Team[] // Team 1 (5) - Team 2 (5)
-  participants User[] // 15 users
+  teams        Team[] // Team 1 (5) - Team 2 (5)
+  participants User[] @relation("TournamentParticipants")
+
+  createdById String
+  createdBy   User   @relation("TournamentCreator", fields: [createdById], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  kickedPlayers User[] @relation("KickedPlayers")
 }
 
 model Team {
@@ -108,9 +120,9 @@ model Team {
 
   players TeamPlayer[]
 
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   tournament   Tournament? @relation(fields: [tournamentId], references: [id])
   tournamentId String?
 }

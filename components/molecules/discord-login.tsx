@@ -8,7 +8,7 @@ const DiscordLogin = () => {
 
   if (!tournamentId) return null;
   return (
-    <Button onClick={() => signIn('discord', { callbackUrl: `/tournaments/${tournamentId}` })}>
+    <Button onClick={() => signIn('discord', { callbackUrl: `/tournament/${tournamentId}` })}>
       <FaDiscord className="mr-2 w-4 h-4" />
       <span>Sign in with Discord</span>
     </Button>

@@ -1,6 +1,7 @@
 import { env } from '@/env.mjs';
 import prisma from '@/lib/prisma';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { PlayerRole, User } from '@prisma/client';
 import { AuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 
@@ -29,11 +30,13 @@ export const authOptions: AuthOptions = {
 
   callbacks: {
     session: async ({ session, user }) => {
-      // session.user = {
-      //   ...session.user,
-      //   discordUsername: user.discordUsername,
-      //   twitchUsername: user.twitchUsername,
-      // };
+      session.user = {
+        ...session.user,
+        isAdmin: (user as User).isAdmin,
+        elo: (user as User).elo ?? 'Zrag',
+        role: (user as User).role ?? PlayerRole.FILL,
+        riotId: (user as User).riotId ?? '',
+      };
       return session;
     },
   },

@@ -1,0 +1,302 @@
+'use server';
+
+import { authOptions } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+import { validateRiotId } from '@/lib/riot';
+import { TournamentStatus } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { revalidatePath } from 'next/cache';
+
+interface Response {
+  message?: string;
+}
+
+export async function participateInTournament(riotId: string, tournamentId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return { message: 'Not authenticated' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user?.email as string,
+      },
+    });
+
+    if (!user) {
+      return { message: 'User not found' };
+    }
+
+    const tounament = await prisma.tournament.findUnique({
+      where: {
+        id: tournamentId,
+      },
+      include: {
+        kickedPlayers: true,
+      },
+    });
+
+    if (!tounament) {
+      return { message: 'Tournament not found' };
+    }
+
+    if (tounament.kickedPlayers.some((player) => player.id === user.id)) {
+      return { message: "You have been kicked from this tournament. You can't participate." };
+    }
+
+    if (tounament.status !== 'ACCEPTING_PARTICIPANTS') {
+      switch (tounament.status) {
+        case 'READY':
+          return { message: 'Tournament is no longer accepting participants, better luck next time!' };
+        case 'CREATED':
+          return { message: 'Tournament is not accepting participants yet. Please wait.' };
+        default:
+          return { message: 'Tournament has ended.' };
+      }
+    }
+
+    const { riotId: verifiedRiotId, elo, role } = await validateRiotId(riotId);
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        riotId: verifiedRiotId,
+        elo,
+        role,
+      },
+    });
+
+    await prisma.tournament.update({
+      where: {
+        id: tournamentId,
+      },
+      data: {
+        participants: {
+          connect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/tournament/[tournamentId]`, 'page');
+
+    return { message: 'Success' };
+  } catch (e) {
+    return { message: (e as Error).message };
+  }
+}
+
+export async function updateTournamentStatus(tournamentId: string, status: TournamentStatus) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return { message: 'Not authenticated' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user?.email as string,
+      },
+    });
+
+    if (!user || !user.isAdmin) {
+      return { message: 'User not found or not an admin' };
+    }
+
+    const tounament = await prisma.tournament.findUnique({
+      where: {
+        id: tournamentId,
+      },
+      include: {
+        createdBy: true,
+      },
+    });
+
+    if (!tounament) {
+      return { message: 'Tournament not found' };
+    }
+
+    if (tounament.createdBy.id !== user.id) {
+      return { message: 'You are not the creator of this tournament' };
+    }
+
+    await prisma.tournament.update({
+      where: {
+        id: tournamentId,
+      },
+      data: {
+        status,
+      },
+    });
+
+    revalidatePath(`/tournament/[tournamentId]/manage`, 'page');
+
+    return { message: 'Success' };
+  } catch (e) {
+    return { message: (e as Error).message };
+  }
+}
+
+export async function kickPlayerFromTournament(tournamentId: string, playerId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return { message: 'Not authenticated' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user?.email as string,
+      },
+    });
+
+    if (!user || !user.isAdmin) {
+      return { message: 'User not found or not an admin' };
+    }
+
+    const tounament = await prisma.tournament.findUnique({
+      where: {
+        id: tournamentId,
+      },
+      include: {
+        createdBy: true,
+      },
+    });
+
+    if (!tounament) {
+      return { message: 'Tournament not found' };
+    }
+
+    if (tounament.createdBy.id !== user.id) {
+      return { message: 'You are not the creator of this tournament' };
+    }
+
+    await prisma.tournament.update({
+      where: {
+        id: tournamentId,
+      },
+      data: {
+        kickedPlayers: {
+          connect: {
+            id: playerId,
+          },
+        },
+        participants: {
+          disconnect: {
+            id: playerId,
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/tournament/[tournamentId]/manage`, 'page');
+
+    return { message: 'Success' };
+  } catch (e) {
+    console.error(e);
+    return { message: (e as Error).message };
+  }
+}
+
+export async function allowPlayerInTournament(tournamentId: string, playerId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return { message: 'Not authenticated' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user?.email as string,
+      },
+    });
+
+    if (!user || !user.isAdmin) {
+      return { message: 'User not found or not an admin' };
+    }
+
+    const tounament = await prisma.tournament.findUnique({
+      where: {
+        id: tournamentId,
+      },
+      include: {
+        createdBy: true,
+      },
+    });
+
+    if (!tounament) {
+      return { message: 'Tournament not found' };
+    }
+
+    if (tounament.createdBy.id !== user.id) {
+      return { message: 'You are not the creator of this tournament' };
+    }
+
+    await prisma.tournament.update({
+      where: {
+        id: tournamentId,
+      },
+      data: {
+        kickedPlayers: {
+          disconnect: {
+            id: playerId,
+          },
+        },
+        participants: {
+          connect: {
+            id: playerId,
+          },
+        },
+      },
+    });
+
+    revalidatePath(`/tournament/[tournamentId]/manage`, 'page');
+
+    return { message: 'Success' };
+  } catch (e) {
+    console.error(e);
+    return { message: (e as Error).message };
+  }
+}
+
+export async function banPlayer(playerId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return { message: 'Not authenticated' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user?.email as string,
+      },
+    });
+
+    if (!user || !user.isAdmin) {
+      return { message: 'User not found or not an admin' };
+    }
+
+    await prisma.user.update({
+      where: {
+        id: playerId,
+      },
+      data: {
+        isBanned: true,
+      },
+    });
+
+    return { message: 'Success' };
+  } catch (e) {
+    console.error(e);
+    return { message: (e as Error).message };
+  }
+}

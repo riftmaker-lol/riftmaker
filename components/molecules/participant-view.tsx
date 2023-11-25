@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -33,21 +33,21 @@ const ParticipantView = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 h-full">
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 h-full w-full">
+      <div className="flex flex-col gap-4 w-full">
         <p></p>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-full">
+        <p>Join a tournament:</p>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 items-end">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 items-end w-full">
             <FormField
               control={form.control}
               name="tournamentId"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tournament ID or invite link?</FormLabel>
+                <FormItem className="flex w-full">
                   <FormControl>
-                    <Input placeholder="http://riftmaker.thembassy." {...field} className="w-full" />
+                    <Input placeholder="https://riftmaker.vercel.app/tournament/<id>" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
