@@ -7,6 +7,8 @@ import InviteLink from '../molecules/invite-link';
 import ParticipantsTable from '../molecules/participants-table';
 import TournamentControls from '../molecules/tournament-controls';
 import Loading from '../ui/loading';
+import CreateTeam from '../molecules/create-team';
+import PickRandom from '../molecules/pick-random';
 
 const queryClient = new QueryClient();
 
@@ -57,7 +59,14 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
       <div className="space-y-8">
         <InviteLink tournament={tournament} />
         <div className="flex flex-col gap-4">
-          <h3 className="text-3xl font-semibold">Participants:</h3>
+          <div className="flex flex-row gap-4 justify-between">
+            <h3 className="text-3xl font-semibold">Participants:</h3>
+            <div className="space-x-2">
+              <CreateTeam tournament={tournament} />
+              <PickRandom tournament={tournament} />
+            </div>
+          </div>
+
           <ParticipantsTable data={tournament.participants} />
         </div>
 

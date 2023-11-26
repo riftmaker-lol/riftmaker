@@ -30,7 +30,6 @@ export async function GET(
       id: tournamentId,
     },
     include: {
-      createdBy: true,
       participants: true,
       kickedPlayers: true,
     },
