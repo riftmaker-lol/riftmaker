@@ -9,6 +9,8 @@ import TournamentControls from '../molecules/tournament-controls';
 import Loading from '../ui/loading';
 import CreateTeam from '../molecules/create-team';
 import PickRandom from '../molecules/pick-random';
+import TeamsTable from '../molecules/teams-table';
+import { GET, TournamentData } from '@/app/api/tournament/[tournamentId]/route';
 
 const queryClient = new QueryClient();
 
@@ -40,10 +42,7 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
 
   if (error) return 'An error has occurred: ' + (error as Error).message;
 
-  const tournament = data as Tournament & {
-    participants: Participant[];
-    kickedPlayers: Participant[];
-  };
+  const tournament = data as TournamentData;
 
   return (
     <>
@@ -57,22 +56,33 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
         {tournament.status !== TournamentStatus.FINISHED && <TournamentControls tournament={tournament} />}
       </div>
       <div className="space-y-8">
-        <InviteLink tournament={tournament} />
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-row gap-4 justify-between">
-            <h3 className="text-3xl font-semibold">Participants:</h3>
-            <div className="space-x-2">
-              <CreateTeam tournament={tournament} />
-              <PickRandom tournament={tournament} />
+        {[TournamentStatus.CREATED, TournamentStatus.ACCEPTING_PARTICIPANTS].includes(tournament.status) && (
+          <InviteLink tournament={tournament} />
+        )}
+        <div className="space-y-16">
+          {tournament.teams.length > 0 && (
+            <div className="flex flex-col gap-4">
+              <h3 className="text-3xl font-semibold">Teams:</h3>
+              <TeamsTable data={tournament.teams} />
             </div>
+          )}
+
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-row gap-4 justify-between items-center">
+              <h3 className="text-3xl font-semibold">Participants:</h3>
+              <div className="space-x-2">
+                <CreateTeam tournament={tournament} />
+                <PickRandom tournament={tournament} />
+              </div>
+            </div>
+
+            <ParticipantsTable data={tournament.participants} />
           </div>
 
-          <ParticipantsTable data={tournament.participants} />
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <h3 className="text-3xl font-semibold">Blacklist Players:</h3>
-          <ParticipantsTable data={tournament.kickedPlayers} />
+          <div className="flex flex-col gap-4">
+            <h3 className="text-3xl font-semibold">Blacklist Players:</h3>
+            <ParticipantsTable data={tournament.kickedPlayers} />
+          </div>
         </div>
       </div>
     </>

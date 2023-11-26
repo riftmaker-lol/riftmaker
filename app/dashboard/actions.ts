@@ -1,8 +1,10 @@
 'use server';
 
 import { authOptions } from '@/lib/auth';
+import { getPotentialPlayers } from '@/lib/draft';
 import prisma from '@/lib/prisma';
-import { PlayerRole, TournamentStatus, User } from '@prisma/client';
+import { PlayerRole, Tournament, TournamentStatus, User } from '@prisma/client';
+import { sample, shuffle } from 'lodash';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 
@@ -86,7 +88,7 @@ export const endTournament = async (id: string) => {
   }
 };
 
-export const createTeam = async (tournamentId: string, random: boolean, teamName: string, elo?: string) => {
+export const createTeam = async (tournamentId: string, random: boolean, elo?: string) => {
   try {
     const session = await getServerSession(authOptions);
 
@@ -118,50 +120,42 @@ export const createTeam = async (tournamentId: string, random: boolean, teamName
     }
 
     // TOODODODODODO
-    const potentialPlayers: User[] = [];
 
-    if (random) {
-      potentialPlayers.push(...tournament.participants);
-    } else {
-      potentialPlayers.push(...tournament.participants.filter((p) => p.elo?.includes(elo as string)));
+    const potentialPlayers = getPotentialPlayers(tournament, random, elo);
+
+    if (potentialPlayers.length < 5) {
+      return { message: 'Not enough players' };
     }
 
-    const { team } = pickPlayers(potentialPlayers);
+    const { team, filledPlayers } = pickPlayers(shuffle(potentialPlayers));
 
-    // const createdTeam = await prisma.team.create({
-    //   data: {
-    //     name: teamName,
-    //     tournament: {
-    //       connect: {
-    //         id: tournamentId,
-    //       },
-    //     },
-    //     players: {
-    //       connect: Object.entries(team).map(([role, player]) => ({
-    //         id: player.id,
-    //         role: role as PlayerRole,
-    //       })),
-    //     },
-    //   },
-    // });
-
-    return { message: 'Success', data: team };
+    return { message: 'Success', data: { team, filledPlayers: filledPlayers.map((p) => p.id) } };
   } catch (e) {
     return { message: (e as Error).message };
   }
 };
 
+const stripPII = (user: User | undefined) => {
+  if (!user) return undefined;
+  return {
+    ...user,
+    email: '',
+    image: '',
+  };
+};
+
 const pickPlayers = (players: User[]) => {
-  const usedPlayers: User[] = [];
+  const usedPlayers: string[] = [];
+  const filledPlayers: User[] = [];
   const team = Object.values(PlayerRole)
     .filter((role) => role !== 'FILL')
     .reduce(
       (acc, role) => {
-        const player = players.find((p) => p.role === role);
+        const player = stripPII(players.find((p) => p.role === role)) as User;
 
         if (player) {
           acc[role] = player;
-          usedPlayers.push(player);
+          usedPlayers.push(player.id);
         }
 
         return acc;
@@ -175,10 +169,11 @@ const pickPlayers = (players: User[]) => {
     for (const role of Object.values(PlayerRole).filter((role) => role !== 'FILL')) {
       if (!team[role as PlayerRole]) {
         console.debug('Filling role', role);
-        const player = players.find((p) => usedPlayers.indexOf(p) === -1);
+        const player = players.find((p) => usedPlayers.indexOf(p.id) === -1);
         if (player) {
           team[role as PlayerRole] = player;
-          usedPlayers.push(player);
+          filledPlayers.push(player);
+          usedPlayers.push(player.id);
         }
       }
     }
@@ -187,5 +182,114 @@ const pickPlayers = (players: User[]) => {
   return {
     team,
     usedPlayers,
+    filledPlayers,
   };
+};
+
+export const rerollPlayer = async (
+  tournamentId: string,
+  role: PlayerRole,
+  elo?: string,
+  draftedTeam?: Record<PlayerRole, User>,
+) => {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return { message: 'Not authenticated' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user?.email as string,
+      },
+    });
+
+    if (!user || !user.isAdmin) {
+      return { message: 'Not allowed' };
+    }
+
+    const tournament = await prisma.tournament.findUnique({
+      where: {
+        id: tournamentId,
+      },
+      include: {
+        participants: true,
+      },
+    });
+
+    if (!tournament) {
+      return { message: 'Not found' };
+    }
+    const excludedPlayers = draftedTeam ? Object.values(draftedTeam).map((p) => p.id) : [];
+    const potentialPlayers = getPotentialPlayers(tournament, !elo, elo).filter(
+      (p) => excludedPlayers.indexOf(p.id) === -1,
+    );
+    const potentialRolePlayers = potentialPlayers.filter((p) => p.role === role);
+
+    if (potentialRolePlayers.length < 1) {
+      return { message: 'Success', data: sample(potentialPlayers), fill: true };
+    }
+    return { message: 'Success', data: sample(potentialPlayers), fill: false };
+  } catch (e) {
+    return { message: (e as Error).message };
+  }
+};
+
+export const saveTournamentTeam = async (tournamentId: string, teamName: string, team: Record<PlayerRole, User>) => {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return { message: 'Not authenticated' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user?.email as string,
+      },
+    });
+
+    if (!user || !user.isAdmin) {
+      return { message: 'Not allowed' };
+    }
+
+    const tournament = await prisma.tournament.findUnique({
+      where: {
+        id: tournamentId,
+      },
+      include: {
+        participants: true,
+      },
+    });
+
+    if (!tournament) {
+      return { message: 'Not found' };
+    }
+
+    const created = await prisma.team.create({
+      data: {
+        name: teamName,
+        tournament: {
+          connect: {
+            id: tournamentId,
+          },
+        },
+        players: {
+          create: Object.entries(team).map(([role, player]) => ({
+            role: role as PlayerRole,
+            player: {
+              connect: {
+                id: player.id,
+              },
+            },
+          })),
+        },
+      },
+    });
+
+    return { message: 'Success', data: created };
+  } catch (e) {
+    return { message: (e as Error).message };
+  }
 };

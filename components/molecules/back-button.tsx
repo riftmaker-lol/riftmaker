@@ -8,7 +8,7 @@ const BackButton = () => {
   const router = useRouter();
 
   return (
-    <Button className="w-fit" onClick={() => router.push('/dashboard')}>
+    <Button variant={'link'} className="w-fit" onClick={() => router.push('/dashboard')}>
       <FiChevronLeft className="mr-2" />
       Back to dashboard
     </Button>
