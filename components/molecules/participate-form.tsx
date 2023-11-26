@@ -79,12 +79,21 @@ const ParticipateForm = ({ tournament, session }: ParticipateFormProps) => {
             </Button>
           )}
         </form>
-        <FormDescription>
-          Get it from:
-          <a href="https://account.riotgames.com/" className="text-accent ml-2">
-            https://account.riotgames.com/
-          </a>
-        </FormDescription>
+        <ul className="list-disc list-inside">
+          <li>
+            Get it from:
+            <a href="https://account.riotgames.com/" className="text-yellow-500 ml-2">
+              https://account.riotgames.com/
+            </a>
+          </li>
+
+          <li>
+            Ensure your profile is up to date:
+            <a href="https://mobalytics.gg/lol" className="text-yellow-500 ml-2">
+              https://mobalytics.gg/lol
+            </a>
+          </li>
+        </ul>
       </Form>
     </div>
   );

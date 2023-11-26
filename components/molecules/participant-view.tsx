@@ -48,7 +48,7 @@ const ParticipantView = () => {
         <p></p>
       </div>
       <div className="flex flex-col gap-4 w-full">
-        <p>Join a tournament:</p>
+        <p className="text-xl">Join a tournament:</p>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 items-end w-full">
             <FormField
@@ -57,7 +57,11 @@ const ParticipantView = () => {
               render={({ field }) => (
                 <FormItem className="flex w-full">
                   <FormControl>
-                    <Input placeholder="https://riftmaker.vercel.app/tournament/<id>" {...field} />
+                    <Input
+                      placeholder="https://riftmaker.vercel.app/tournament/<id>"
+                      {...field}
+                      className="bg-background"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

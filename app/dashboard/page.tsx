@@ -1,5 +1,5 @@
 import CreateTournament from '@/components/molecules/create-tournament';
-import TournamentList from '@/components/organisms/tournament-list';
+import TournamentTable from '@/components/organisms/tournament-table';
 import { env } from '@/env.mjs';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
@@ -28,20 +28,20 @@ const Dashboard = async () => {
   });
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24 ">
+    <main className="flex flex-col items-center p-24 w-full">
       <div className="flex flex-col gap-4 my-auto w-full">
         <div className="flex flex-col gap-4 w-full">
           <div className="flex flex-row gap-4 justify-between">
             <h3 className="text-3xl font-bold">Active Tournaments:</h3>
             <CreateTournament />
           </div>
-          <TournamentList
+          <TournamentTable
             tournaments={tournaments.filter((tournament) => tournament.status !== 'FINISHED').map(mapTournament)}
           />
         </div>
         <div className="flex flex-col gap-4 w-full">
           <h3 className="text-3xl font-bold">Past Tournaments:</h3>
-          <TournamentList
+          <TournamentTable
             tournaments={tournaments.filter((tournament) => tournament.status === 'FINISHED').map(mapTournament)}
             actions={{
               view: true,

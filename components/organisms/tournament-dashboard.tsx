@@ -27,7 +27,7 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
 
   if (isLoading)
     return (
-      <div className="flex items-center justify-center h-screen gap-2">
+      <div className="flex items-center justify-center my-auto gap-2">
         <Loading className="w-4 h-4" /> <span>Loading ...</span>
       </div>
     );
@@ -38,7 +38,7 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
 
   return (
     <>
-      <div className="flex flex-row justify-between gap-4">
+      <div className="flex flex-row justify-between gap-4 font-sans">
         <div className="space-y-4">
           <h1 className="text-4xl font-bold">{tournament.name}</h1>
           <p>

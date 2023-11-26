@@ -4,8 +4,8 @@ import DiscordLogin from '../molecules/discord-login';
 
 const NotLoggedIn = () => {
   return (
-    <div className="w-screen h-screen  items-center flex justify-center gap-4 ">
-      <p className="text-3xl font-semibold">Tconnecta layhfdek: </p>
+    <div className="m-auto items-center flex justify-center gap-4 ">
+      <p className="text-3xl font-semibold">Please sign in</p>
       <DiscordLogin />
     </div>
   );
