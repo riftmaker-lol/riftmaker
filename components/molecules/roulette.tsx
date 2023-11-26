@@ -1,12 +1,9 @@
 'use client';
 
 import { TournamentData } from '@/app/api/tournament/[tournamentId]/route';
-import { range, shuffle } from 'lodash';
 import { useMemo, useState } from 'react';
-import { Wheel } from 'react-custom-roulette';
 
 import { useQuery } from 'react-query';
-import { Button } from '../ui/button';
 import Loading from '../ui/loading';
 
 interface RouletteProps {
