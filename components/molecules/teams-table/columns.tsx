@@ -23,6 +23,7 @@ import { FaRegCopy } from 'react-icons/fa6';
 import { PlayerRole } from '@prisma/client';
 import { cn } from '@/lib/utils';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
+import { sortByRole } from '@/lib/draft';
 
 export const columns: ColumnDef<Omit<TeamEntry, 'tournamentId'>>[] = [
   {
@@ -48,28 +49,30 @@ export const columns: ColumnDef<Omit<TeamEntry, 'tournamentId'>>[] = [
       const team = row.original as TeamEntry;
       return (
         <div className="grid grid-cols-5 gap-4">
-          {team.players.map((player) => (
-            <div key={player.id} className="flex flex-col gap-1 ">
-              <span
-                className={cn('text-sm flex gap-2', {
-                  'text-red-400': player.role !== player.mainRole,
-                })}
-              >
-                {player.riotId}
-                <FaRegCopy
-                  className="w-4 h-4 ml-2 cursor-pointer"
-                  title="Copy invite link"
-                  onClick={() => {
-                    navigator.clipboard.writeText(player.riotId);
-                    toast({
-                      title: 'Copied to clipboard',
-                    });
-                  }}
-                />
-              </span>
-              <span className="text-sm text-gray-500">{player.name}</span>
-            </div>
-          ))}
+          {team.players
+            .sort((a, b) => sortByRole(a, b))
+            .map((player) => (
+              <div key={player.id} className="flex flex-col gap-1 ">
+                <span
+                  className={cn('text-sm flex gap-2', {
+                    'text-red-400': player.role !== player.mainRole,
+                  })}
+                >
+                  {player.riotId}
+                  <FaRegCopy
+                    className="w-4 h-4 ml-2 cursor-pointer"
+                    title="Copy invite link"
+                    onClick={() => {
+                      navigator.clipboard.writeText(player.riotId);
+                      toast({
+                        title: 'Copied to clipboard',
+                      });
+                    }}
+                  />
+                </span>
+                <span className="text-sm text-gray-500">{player.name}</span>
+              </div>
+            ))}
         </div>
       );
     },

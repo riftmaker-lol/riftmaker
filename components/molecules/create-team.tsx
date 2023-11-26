@@ -27,21 +27,10 @@ import { useState } from 'react';
 import Loading from '../ui/loading';
 import { IoRefreshSharp } from 'react-icons/io5';
 import { Input } from '../ui/input';
-
-const ranks = [
-  'IRON',
-  'BRONZE',
-  'SILVER',
-  'GOLD',
-  'PLATINUM',
-  'DIAMOND',
-  'MASTER',
-  'GRANDMASTER',
-  'CHALLENGER',
-] as const;
+import { Ranks } from '@/lib/draft';
 
 const formSchema = z.object({
-  elo: z.enum(ranks).optional(),
+  elo: z.enum(Ranks).optional(),
   random: z.boolean().optional(),
   teamName: z.string().optional(),
 });
@@ -239,7 +228,7 @@ const CreateTeam = ({ tournament }: CreateTeamProps) => {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {ranks.map((rank) => (
+                                  {Ranks.map((rank) => (
                                     <SelectItem key={rank} value={rank}>
                                       {rank}
                                     </SelectItem>

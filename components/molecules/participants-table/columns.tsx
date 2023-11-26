@@ -29,7 +29,7 @@ export const columns: ColumnDef<Omit<ParticipantEntry, 'tournamentId' | 'id'>>[]
     header: ({ column }) => <DataTableColumnHeader column={column} title="Discord Name" />,
   },
   {
-    accessorKey: 'rank',
+    accessorKey: 'elo',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Rank" />,
   },
   {

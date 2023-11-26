@@ -11,18 +11,10 @@ import CreateTeam from '../molecules/create-team';
 import PickRandom from '../molecules/pick-random';
 import TeamsTable from '../molecules/teams-table';
 import { GET, TournamentData } from '@/app/api/tournament/[tournamentId]/route';
+import { useMemo } from 'react';
+import RouletteDefault from '../molecules/roulette';
 
 const queryClient = new QueryClient();
-
-interface Participant {
-  id: string;
-  riotId: string;
-  name: string;
-  role: string;
-  rank: string;
-  tournamentId: string;
-  kicked: boolean;
-}
 
 const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string }) => {
   const { isLoading, error, data } = useQuery(
@@ -55,26 +47,30 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
         </div>
         {tournament.status !== TournamentStatus.FINISHED && <TournamentControls tournament={tournament} />}
       </div>
-      <div className="space-y-8">
-        {[TournamentStatus.CREATED, TournamentStatus.ACCEPTING_PARTICIPANTS].includes(tournament.status) && (
-          <InviteLink tournament={tournament} />
-        )}
-        <div className="space-y-16">
-          {tournament.teams.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <h3 className="text-3xl font-semibold">Teams:</h3>
-              <TeamsTable data={tournament.teams} />
-            </div>
-          )}
 
+      <div className="space-y-8">
+        {([TournamentStatus.CREATED, TournamentStatus.ACCEPTING_PARTICIPANTS] as TournamentStatus[]).includes(
+          tournament.status,
+        ) && <InviteLink tournament={tournament} />}
+        <div className="space-y-16">
           <div className="flex flex-col gap-4">
             <div className="flex flex-row gap-4 justify-between items-center">
-              <h3 className="text-3xl font-semibold">Participants:</h3>
+              <h3 className="text-3xl font-semibold">Teams:</h3>
               <div className="space-x-2">
-                <CreateTeam tournament={tournament} />
-                <PickRandom tournament={tournament} />
+                {tournament.status === TournamentStatus.READY && (
+                  <>
+                    <CreateTeam tournament={tournament} />
+                    <PickRandom tournamentId={tournamentId} />
+                  </>
+                )}
               </div>
             </div>
+
+            <TeamsTable data={tournament.teams} />
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h3 className="text-3xl font-semibold">Participants:</h3>
 
             <ParticipantsTable data={tournament.participants} />
           </div>

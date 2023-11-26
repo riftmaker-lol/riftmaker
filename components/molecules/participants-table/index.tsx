@@ -11,7 +11,7 @@ export interface ParticipantEntry {
   id: string;
   riotId: string;
   name: string;
-  rank: string;
+  elo: string;
   role: string;
   kicked: boolean;
   tournamentId: string;

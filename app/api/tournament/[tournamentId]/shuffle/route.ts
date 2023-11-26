@@ -1,6 +1,7 @@
 import { mapPlayer } from '@/lib/draft';
 import prisma from '@/lib/prisma';
 import { PlayerRole, Team, Tournament, User } from '@prisma/client';
+import { shuffle } from 'lodash';
 import { NextApiRequest } from 'next';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -77,11 +78,13 @@ const mapTournament = (
   },
 ) => ({
   ...tournament,
-  participants: tournament.participants.map((participant) => ({
-    ...mapPlayer(participant),
-    tournamentId: tournament.id,
-    kicked: tournament.kickedPlayers.some((kickedPlayer) => kickedPlayer.id === participant.id),
-  })),
+  participants: shuffle(
+    tournament.participants.map((participant) => ({
+      ...mapPlayer(participant),
+      tournamentId: tournament.id,
+      kicked: tournament.kickedPlayers.some((kickedPlayer) => kickedPlayer.id === participant.id),
+    })),
+  ),
   kickedPlayers: tournament.kickedPlayers.map((participant) => ({
     ...mapPlayer(participant),
     tournamentId: tournament.id,
