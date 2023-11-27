@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import BackButton from '@/components/molecules/back-button';
 import TournamentDashboard from '@/components/organisms/tournament-dashboard';
+import { Suspense } from 'react';
 
 const ManageTournament = async ({
   params,
@@ -20,7 +21,9 @@ const ManageTournament = async ({
   return (
     <main className="flex flex-col gap-8 px-24 w-full">
       <BackButton />
-      <TournamentDashboard tournamentId={tournamentId} />
+      <Suspense>
+        <TournamentDashboard tournamentId={tournamentId} />
+      </Suspense>
     </main>
   );
 };

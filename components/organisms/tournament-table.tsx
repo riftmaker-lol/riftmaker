@@ -51,7 +51,7 @@ const TournamentTable = ({
     <div className="py-8">
       <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <table className="min-w-full divide-y divide-accent">
+          <table className="min-w-full divide-y divide-zinc-500">
             <thead>
               <tr>
                 <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-0">
@@ -73,7 +73,7 @@ const TournamentTable = ({
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-accent">
+            <tbody className="divide-y divide-zinc-500">
               {tournaments.map((tournament) => (
                 <tr key={tournament.id}>
                   <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-0">{tournament.name}</td>

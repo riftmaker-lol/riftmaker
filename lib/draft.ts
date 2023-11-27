@@ -34,6 +34,7 @@ export const Ranks = [
   'SILVER',
   'GOLD',
   'PLATINUM',
+  'EMERALD',
   'DIAMOND',
   'MASTER',
   'GRANDMASTER',

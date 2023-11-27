@@ -7,6 +7,7 @@ import localFont from 'next/font/local';
 
 import './globals.css';
 import Header from '@/components/organisms/header';
+import Footer from '@/components/organisms/footer';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <NextAuthProvider>
             <Header />
             {children}
+            <Footer />
           </NextAuthProvider>
         </ThemeProvider>
       </body>

@@ -25,12 +25,7 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
     },
   );
 
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center my-auto gap-2">
-        <Loading className="w-4 h-4" /> <span>Loading ...</span>
-      </div>
-    );
+  if (isLoading) return null; // TODO: use skeleton loading
 
   if (error) return 'An error has occurred: ' + (error as Error).message;
 

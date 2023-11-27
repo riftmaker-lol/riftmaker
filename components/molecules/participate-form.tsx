@@ -64,7 +64,7 @@ const ParticipateForm = ({ tournament, session }: ParticipateFormProps) => {
             control={form.control}
             name="riotId"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-full">
                 <FormControl>
                   <Input placeholder="Stormix#lurk" {...field} readOnly={joined} />
                 </FormControl>
