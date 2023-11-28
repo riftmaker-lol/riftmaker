@@ -12,6 +12,7 @@ import { Tournament, User } from '@prisma/client';
 import { participateInTournament } from '@/app/tournament/[tournamentId]/actions';
 import { Session } from 'next-auth';
 import { Label } from '@radix-ui/react-label';
+import { useState } from 'react';
 
 const formSchema = z.object({
   riotId: z.custom<`${string}#${string}` | ''>((val) => {
@@ -27,6 +28,7 @@ interface ParticipateFormProps {
 }
 
 const ParticipateForm = ({ tournament, session }: ParticipateFormProps) => {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,6 +39,7 @@ const ParticipateForm = ({ tournament, session }: ParticipateFormProps) => {
   const { toast } = useToast();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
     const { message } = await participateInTournament(values.riotId, tournament.id);
     if (message === 'Success') {
       form.reset();
@@ -51,6 +54,7 @@ const ParticipateForm = ({ tournament, session }: ParticipateFormProps) => {
         variant: 'destructive',
       });
     }
+    setLoading(false);
   };
 
   const joined = tournament.participants.some((p) => p.email === session.user.email);
@@ -72,7 +76,11 @@ const ParticipateForm = ({ tournament, session }: ParticipateFormProps) => {
               </FormItem>
             )}
           />
-          {!joined && <Button type="submit">Join</Button>}
+          {!joined && (
+            <Button type="submit" loading={loading}>
+              Join
+            </Button>
+          )}
           {joined && (
             <Button type="submit" variant="outline" disabled>
               Joined

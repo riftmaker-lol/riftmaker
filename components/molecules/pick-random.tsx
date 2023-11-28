@@ -22,7 +22,6 @@ import { buttonVariants } from '../ui/button';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import PlayerSlot from './player-slot';
-import RouletteDefault from './roulette';
 import Roulette from './roulette';
 
 interface PickRandomProps {

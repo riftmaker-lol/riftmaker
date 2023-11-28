@@ -104,13 +104,10 @@ export const columns: ColumnDef<Omit<ParticipantEntry, 'tournamentId' | 'id'>>[]
 
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <IoEllipsisHorizontal className="h-4 w-4" />
-            </Button>
+          <DropdownMenuTrigger>
+            <IoEllipsisHorizontal className="h-4 w-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent>
             {player.kicked ? (
               <DropdownMenuItem onClick={() => allowUser()}>Allow user</DropdownMenuItem>
             ) : (

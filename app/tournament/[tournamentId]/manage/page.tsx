@@ -3,6 +3,7 @@ import { authOptions } from '@/lib/auth';
 import BackButton from '@/components/molecules/back-button';
 import TournamentDashboard from '@/components/organisms/tournament-dashboard';
 import { Suspense } from 'react';
+import Roulette from '@/components/molecules/roulette';
 
 const ManageTournament = async ({
   params,
@@ -19,7 +20,7 @@ const ManageTournament = async ({
   }
 
   return (
-    <main className="flex flex-col gap-8 px-24 w-full">
+    <main className="flex flex-col gap-8 px-24 w-full flex-grow">
       <BackButton />
       <Suspense>
         <TournamentDashboard tournamentId={tournamentId} />

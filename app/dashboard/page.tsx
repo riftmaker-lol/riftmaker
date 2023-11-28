@@ -1,5 +1,5 @@
 import CreateTournament from '@/components/molecules/create-tournament';
-import TournamentTable from '@/components/organisms/tournament-table';
+import TournamentsTable from '@/components/molecules/tournaments-table';
 import { env } from '@/env.mjs';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
@@ -21,10 +21,9 @@ const Dashboard = async () => {
     })) ?? [];
 
   const mapTournament = (tournament: (typeof tournaments)[0]) => ({
-    // TODO: implement unboxed!
     ...tournament,
     inviteLink: `${env.NEXT_PUBLIC_BASE_URL}/tournament/${tournament.id}`,
-    participants: tournament.participants.length,
+    participantsCount: tournament.participants.length,
   });
 
   return (
@@ -35,18 +34,14 @@ const Dashboard = async () => {
             <h3 className="text-3xl font-bold">Active Tournaments:</h3>
             <CreateTournament />
           </div>
-          <TournamentTable
-            tournaments={tournaments.filter((tournament) => tournament.status !== 'FINISHED').map(mapTournament)}
+          <TournamentsTable
+            data={tournaments.filter((tournament) => tournament.status !== 'FINISHED').map(mapTournament)}
           />
         </div>
         <div className="flex flex-col gap-4 w-full">
           <h3 className="text-3xl font-bold">Past Tournaments:</h3>
-          <TournamentTable
-            tournaments={tournaments.filter((tournament) => tournament.status === 'FINISHED').map(mapTournament)}
-            actions={{
-              view: true,
-              end: false,
-            }}
+          <TournamentsTable
+            data={tournaments.filter((tournament) => tournament.status === 'FINISHED').map(mapTournament)}
           />
         </div>
       </div>

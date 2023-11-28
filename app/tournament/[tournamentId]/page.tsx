@@ -1,17 +1,33 @@
-import NotLoggedIn from '../../../components/organisms/not-loggedin';
-import prisma from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import ParticipateForm from '@/components/molecules/participate-form';
 import Status from '@/components/tournament-status';
+import { authOptions } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import NotLoggedIn from '@/components/organisms/not-loggedin';
 
-const Tournament = async ({
-  params,
-}: {
+interface TournamentPageProps {
   params: {
     tournamentId: string;
   };
-}) => {
+}
+
+export async function generateMetadata({ params }: TournamentPageProps) {
+  const tournament = await prisma.tournament.findUnique({
+    where: {
+      id: params.tournamentId,
+    },
+    include: {
+      createdBy: true,
+      participants: true,
+    },
+  });
+
+  return {
+    title: `Riftmaker | Manage Tournament ${tournament?.name ?? ''}}`,
+  };
+}
+
+const Tournament = async ({ params }: TournamentPageProps) => {
   const session = await getServerSession(authOptions);
 
   const tournament = await prisma.tournament.findUnique({
