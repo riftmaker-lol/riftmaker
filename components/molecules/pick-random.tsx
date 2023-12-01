@@ -29,16 +29,16 @@ interface PickRandomProps {
 }
 
 const formSchema = z.object({
-  elo: z.enum(Ranks).optional(),
-  role: z.enum(Lanes).optional(),
+  elo: z.enum(Ranks).optional().or(z.literal('random')),
+  role: z.enum(Lanes).optional().or(z.literal('random')),
 });
 
 const PickRandom = ({ tournamentId }: PickRandomProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      elo: undefined,
-      role: undefined,
+      elo: 'random',
+      role: 'random',
     },
   });
 
@@ -93,6 +93,7 @@ const PickRandom = ({ tournamentId }: PickRandomProps) => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
+                            <SelectItem value={'random'}>Random</SelectItem>
                             {Ranks.map((rank) => (
                               <SelectItem key={rank} value={rank}>
                                 {rank}
@@ -119,6 +120,7 @@ const PickRandom = ({ tournamentId }: PickRandomProps) => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
+                            <SelectItem value={'random'}>FILL</SelectItem>
                             {Lanes.map((lane) => (
                               <SelectItem key={lane} value={lane}>
                                 {lane}

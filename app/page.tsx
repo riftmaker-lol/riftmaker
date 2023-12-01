@@ -1,5 +1,6 @@
 import LoadingIndicator from '@/components/loading-indicator';
 import ParticipantView from '@/components/molecules/participant-view';
+import Roulette from '@/components/molecules/roulette';
 
 const Home = () => {
   return (
