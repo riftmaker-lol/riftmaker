@@ -1,9 +1,8 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import BackButton from '@/components/molecules/back-button';
 import TournamentDashboard from '@/components/organisms/tournament-dashboard';
+import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth';
 import { Suspense } from 'react';
-import Roulette from '@/components/molecules/roulette';
 
 const ManageTournament = async ({
   params,

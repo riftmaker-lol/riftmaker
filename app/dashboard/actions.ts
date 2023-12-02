@@ -288,6 +288,9 @@ export const saveTournamentTeam = async (tournamentId: string, teamName: string,
       },
     });
 
+    revalidatePath(`/tournament/[tournamentId]`, 'page');
+    revalidatePath(`/tournament/[tournamentId]/manage`, 'page');
+
     return { message: 'Success', data: created };
   } catch (e) {
     return { message: (e as Error).message };

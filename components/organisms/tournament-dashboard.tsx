@@ -2,15 +2,14 @@
 
 import { TournamentStatus } from '@prisma/client';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
-
 import { TournamentData } from '@/app/api/tournament/[tournamentId]/route';
+import { useState } from 'react';
 import CreateTeam from '../molecules/create-team';
 import InviteLink from '../molecules/invite-link';
 import ParticipantsTable from '../molecules/participants-table';
 import PickRandom from '../molecules/pick-random';
 import TeamsTable from '../molecules/teams-table';
 import TournamentControls from '../molecules/tournament-controls';
-import Roulette from '../molecules/roulette';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,11 +20,13 @@ const queryClient = new QueryClient({
 });
 
 const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string }) => {
+  const [open, setOpen] = useState(false);
+
   const { error, data } = useQuery(
     'tounament',
     () => fetch(`/api/tournament/${tournamentId}`).then((res) => res.json()),
     {
-      // refetchInterval: 10_000,
+      refetchInterval: 5_000,
     },
   );
 
@@ -60,7 +61,7 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
                   {tournament.status === TournamentStatus.READY && (
                     <>
                       <CreateTeam tournament={tournament} />
-                      <PickRandom tournamentId={tournamentId} />
+                      <PickRandom tournamentId={tournamentId} open={open} onOpenChange={setOpen} />
                     </>
                   )}
                 </div>

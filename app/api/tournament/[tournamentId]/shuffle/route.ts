@@ -17,6 +17,16 @@ export async function GET(
 ) {
   const { tournamentId } = params;
 
+  const query = request.nextUrl.searchParams;
+
+  const filterByRole = query.get('role') as PlayerRole;
+  const filterByElo = query.get('elo') as string;
+
+  console.log({
+    filterByRole,
+    filterByElo,
+  });
+
   if (!tournamentId) {
     return NextResponse.json(
       {
@@ -58,7 +68,7 @@ export async function GET(
     );
   }
 
-  const data = mapTournament(tournament);
+  const data = mapTournament(tournament, filterByRole, filterByElo);
 
   return NextResponse.json(data);
 }
@@ -76,33 +86,54 @@ const mapTournament = (
       }
     >;
   },
-) => ({
-  ...tournament,
-  participants: shuffle(
-    tournament.participants.map((participant) => ({
-      ...mapPlayer(participant),
-      tournamentId: tournament.id,
-      kicked: tournament.kickedPlayers.some((kickedPlayer) => kickedPlayer.id === participant.id),
-    })),
-  ),
-  kickedPlayers: tournament.kickedPlayers.map((participant) => ({
+  filterByRole?: PlayerRole,
+  filterByElo?: string,
+) => {
+  const participants = tournament.participants.map((participant) => ({
     ...mapPlayer(participant),
     tournamentId: tournament.id,
-    kicked: true,
-  })),
-  teams: tournament.teams.map((team) => ({
-    id: team.id,
-    name: team.name,
-    tournamentId: tournament.id,
-    players: team.players.map((player) => {
-      const p = mapPlayer(player.player);
-      return {
-        ...p,
-        mainRole: p.role as PlayerRole,
-        role: player.role as PlayerRole,
-      };
-    }),
-  })),
-});
+    kicked: tournament.kickedPlayers.some((kickedPlayer) => kickedPlayer.id === participant.id),
+  }));
+
+  const filterParticipants = participants.filter((participant) => {
+    if (filterByRole && !participant.role.toLocaleLowerCase().includes(filterByRole.toLocaleLowerCase())) {
+      return false;
+    }
+
+    if (filterByElo && participant.elo !== filterByElo) {
+      return false;
+    }
+
+    return true;
+  });
+
+  console.info({
+    filterParticipants: filterParticipants.length,
+    participants: participants.length,
+  });
+
+  return {
+    ...tournament,
+    participants: shuffle(filterParticipants.length < 5 ? participants : filterParticipants), // TODO: document this
+    kickedPlayers: tournament.kickedPlayers.map((participant) => ({
+      ...mapPlayer(participant),
+      tournamentId: tournament.id,
+      kicked: true,
+    })),
+    teams: tournament.teams.map((team) => ({
+      id: team.id,
+      name: team.name,
+      tournamentId: tournament.id,
+      players: team.players.map((player) => {
+        const p = mapPlayer(player.player);
+        return {
+          ...p,
+          mainRole: p.role as PlayerRole,
+          role: player.role as PlayerRole,
+        };
+      }),
+    })),
+  };
+};
 
 export type TournamentData = ReturnType<typeof mapTournament>;
