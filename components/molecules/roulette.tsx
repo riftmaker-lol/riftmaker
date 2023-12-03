@@ -6,7 +6,7 @@ import { TournamentData } from '@/app/api/tournament/[tournamentId]/shuffle/rout
 import { cn } from '@/lib/utils';
 import { PlayerRole } from '@prisma/client';
 import { ChevronUpIcon, LockClosedIcon } from '@radix-ui/react-icons';
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { GiRollingDices } from 'react-icons/gi';
 import { IoRefreshOutline } from 'react-icons/io5';
 import { useQuery } from 'react-query';
@@ -40,7 +40,6 @@ const Roulette = ({
   deactivate,
 }: RouletteProps) => {
   const searchParams = new URLSearchParams();
-
   if (elo) searchParams.append('elo', elo);
   if (role) searchParams.append('role', role);
 
@@ -50,6 +49,10 @@ const Roulette = ({
     ).then((res) => res.json()),
   );
 
+  useEffect(() => {
+    refetch();
+  }, [elo, refetch, role]);
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const items = data?.participants?.filter((p) => !filterPlayerIds?.includes(p.id)) ?? [];
 
@@ -57,19 +60,8 @@ const Roulette = ({
     wrapperRef,
     items,
     config,
-    onEnd: (player) => {
-      console.log('Ended: ', player);
-    },
     onStateChange,
   });
-
-  const reroll = () => {
-    startRoulette(Math.floor(Math.random() * items.length));
-  };
-
-  const lockIn = () => {
-    onLockIn(winner);
-  };
 
   useEffect(() => {
     if (data?.message) {
@@ -77,13 +69,17 @@ const Roulette = ({
         title: 'Warning',
         description: data.message,
         variant: 'warning',
+        duration: 10_000,
       });
     }
   }, [data?.message]);
 
   return (
     <div className="flex flex-col w-full relative justify-center gap-4 items-center overflow-x-hidden">
-      <p>Picking from {items.length} players</p>
+      <p>
+        Picking from {items.length} players that match your criteria (elo: <b>{elo ?? 'any'}</b>, role:{' '}
+        <b>{role?.toLowerCase() ?? 'any'}</b>)
+      </p>
       <div className="flex flex-row gap-4 w-[480px] h-32 relative overflow-hidden" ref={wrapperRef}>
         {Array.from({ length: 6 }, (_, i) => (
           <div key={i} className="w-24 h-24 inline-block absolute" data-value={0}>
@@ -102,12 +98,16 @@ const Roulette = ({
             Start Roulette
           </Button>
         ) : (
-          <Button onClick={() => reroll()} disabled={running || deactivate} className="flex gap-2 items-center">
+          <Button
+            onClick={() => startRoulette(Math.floor(Math.random() * items.length))}
+            disabled={running || deactivate}
+            className="flex gap-2 items-center"
+          >
             <IoRefreshOutline className="w-4 h-4" />
             Reroll
           </Button>
         )}
-        <Button onClick={() => lockIn()} disabled={running || deactivate} className="flex gap-2 items-center">
+        <Button onClick={() => onLockIn(winner)} disabled={running || deactivate} className="flex gap-2 items-center">
           <LockClosedIcon className="w-4 h-4" />
           Lock in
         </Button>
@@ -116,4 +116,4 @@ const Roulette = ({
   );
 };
 
-export default Roulette;
+export default memo(Roulette);

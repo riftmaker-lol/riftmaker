@@ -58,9 +58,11 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
   const [current, setCurrent] = useState<{
     elo: z.infer<typeof formSchema>['elo'];
     player: string | undefined;
+    duration: number;
   }>({
     elo: 'random',
     player: undefined,
+    duration: 3,
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -75,8 +77,8 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
     setCurrent({
       elo: values.elo,
       player: undefined,
+      duration: values.duration ?? 3,
     });
-    setDuration(values.duration ?? 3);
     toast({
       title: 'Roulette Configured',
       description: 'The roulette has been configured and is ready to spin!',
@@ -167,20 +169,17 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
               role={lane}
               player={team[lane]}
               onRemove={() => setTeam((prev) => ({ ...prev, [lane]: undefined }))}
-              selected={selectLane === lane}
-              onSelect={(lane) => {
-                setSelectedLane(lane);
-              }}
+              selected={selectLane === lane || nextUnfilledRole === lane}
+              onSelect={(lane) => setSelectedLane(lane)}
             />
           ))}
         </div>
+
         {teamFull && (
-          <>
-            <Button size={'lg'} variant={'accent'} className="w-fit mx-auto" onClick={() => saveTeam()}>
-              <AiOutlineTeam className="w-6 h-6 mr-4" />
-              Create Team
-            </Button>
-          </>
+          <Button size={'lg'} variant={'accent'} className="w-fit mx-auto" onClick={() => saveTeam()}>
+            <AiOutlineTeam className="w-6 h-6 mr-4" />
+            Create Team
+          </Button>
         )}
 
         {current && (
@@ -197,10 +196,9 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
             config={{
               duration: duration * 1000,
             }}
-            onStateChange={(state) => {
-              setRunning(state === 'running');
-            }}
+            onStateChange={(state) => setRunning(state === 'running')}
             onLockIn={(player) => {
+              console.info('Locking in', player);
               setTeam((prev) => {
                 const role = nextUnfilledRole;
                 if (!role) {

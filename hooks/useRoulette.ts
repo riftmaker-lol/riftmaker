@@ -9,7 +9,7 @@ interface useRouletteProps {
   config: {
     duration: number;
   };
-  onEnd: (player: Player) => void;
+  onEnd?: (player: Player) => void;
   onStateChange?: (state: 'running' | 'stopped') => void;
 }
 
@@ -25,7 +25,8 @@ export const updateItemValue = (item: Element, _index: number) => {
   item.setAttribute('data-value', _index.toString());
 };
 
-export const updateItem = (item: Element, player: Player) => {
+export const updateItem = (item: Element, player: Player | undefined) => {
+  if (!player) return;
   (item.lastChild as HTMLImageElement).src = player.image as string;
   (item.firstChild as HTMLDivElement).textContent = player.name;
 };
@@ -95,7 +96,7 @@ export const useRoulette = ({
       setProgress(1);
       render();
       setStart(false);
-      onEnd(getItem(winnerItem));
+      onEnd?.(getItem(winnerItem));
       onStateChange?.('stopped');
       return;
     }
