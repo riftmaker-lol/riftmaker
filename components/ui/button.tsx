@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
         outline: 'border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground',
         secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        ghost: '',
         link: 'text-primary underline-offset-4 hover:underline',
         accent: 'bg-accent text-accent-foreground shadow-sm hover:bg-accent/90',
       },
@@ -32,32 +32,33 @@ const buttonVariants = cva(
   },
 );
 
-interface ButtonProps extends VariantProps<typeof buttonVariants> {
-  onClick?: () => void;
-  loading?: boolean;
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   className?: string;
-  children?: React.ReactNode;
-  type?: 'button' | 'submit' | 'reset';
-  ref?: React.ForwardedRef<HTMLButtonElement>;
+  loading?: boolean;
   icon?: React.ReactNode;
-  disabled?: boolean;
+  asChild?: boolean;
 }
-const Button: React.FC<ButtonProps> = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, loading, onClick, className, type, variant, icon, size, disabled }, ref) => {
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, loading, icon, asChild, children, ...props }, ref) => {
+    const Comp = asChild ? Slot : 'button';
+    const fallback = loading || icon;
     return (
-      <button
-        className={cn(buttonVariants({ variant, size, className }), {
-          'gap-2': loading,
-        })}
-        disabled={loading || disabled}
-        type={type ?? 'button'}
-        ref={ref}
-        {...(onClick && { onClick })}
-      >
-        {!loading && icon}
-        {loading && <LoadingIndicator variant="spinner" className="h-4 w-4" />}
-        {children ?? null}
-      </button>
+      <>
+        {fallback && (
+          <button className={cn(buttonVariants({ variant, size, className }), 'gap-2')} ref={ref} {...props}>
+            {!loading && icon}
+            {loading && <LoadingIndicator variant="spinner" className="w-4 h-4" />}
+            {children ?? null}
+          </button>
+        )}
+        {!fallback && (
+          // eslint-disable-next-line react/no-children-prop
+          <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} children={children} />
+        )}
+      </>
     );
   },
 );

@@ -18,6 +18,7 @@ import {
   blacklistPlayerFromTournament,
   removePlayerFromTournament,
 } from '@/app/tournament/[tournamentId]/actions';
+import { sortByPlayerElo } from '@/lib/table';
 
 export const columns: ColumnDef<Omit<ParticipantEntry, 'tournamentId' | 'id'>>[] = [
   {
@@ -31,6 +32,9 @@ export const columns: ColumnDef<Omit<ParticipantEntry, 'tournamentId' | 'id'>>[]
   {
     accessorKey: 'elo',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Rank" />,
+    sortingFn: (rowA, rowB) => {
+      return sortByPlayerElo(rowB.original, rowA.original);
+    },
   },
   {
     accessorKey: 'role',
@@ -39,6 +43,7 @@ export const columns: ColumnDef<Omit<ParticipantEntry, 'tournamentId' | 'id'>>[]
   {
     accessorKey: 'actions',
     header: 'Actions',
+    enableSorting: false,
     cell: ({ row }) => {
       const player = row.original as ParticipantEntry;
 

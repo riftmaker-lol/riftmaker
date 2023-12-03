@@ -19,7 +19,7 @@ const ManageTournament = async ({
   }
 
   return (
-    <main className="flex flex-col gap-8 px-24 w-full flex-grow">
+    <main className="flex flex-col gap-16 px-24 w-full flex-grow">
       <BackButton />
       <Suspense>
         <TournamentDashboard tournamentId={tournamentId} />

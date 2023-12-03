@@ -112,14 +112,17 @@ export const createTeam = async (tournamentId: string, random: boolean, elo?: st
       },
       include: {
         participants: true,
+        teams: {
+          include: {
+            players: true,
+          },
+        },
       },
     });
 
     if (!tournament) {
       return { message: 'Not found' };
     }
-
-    // TOODODODODODO
 
     const potentialPlayers = getPotentialPlayers(tournament, random, elo);
 
@@ -215,6 +218,11 @@ export const rerollPlayer = async (
       },
       include: {
         participants: true,
+        teams: {
+          include: {
+            players: true,
+          },
+        },
       },
     });
 

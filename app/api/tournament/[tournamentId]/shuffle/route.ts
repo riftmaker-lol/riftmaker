@@ -1,6 +1,6 @@
 import { mapPlayer } from '@/lib/draft';
 import prisma from '@/lib/prisma';
-import { PlayerRole, Team, Tournament, User } from '@prisma/client';
+import { PlayerRole, Team, TeamPlayer, Tournament, User } from '@prisma/client';
 import { shuffle } from 'lodash';
 import { NextApiRequest } from 'next';
 import { NextRequest, NextResponse } from 'next/server';
@@ -79,21 +79,26 @@ const mapTournament = (
     kickedPlayers: User[];
     teams: Array<
       Team & {
-        players: Array<{
-          role: PlayerRole;
-          player: User;
-        }>;
+        players: Array<
+          TeamPlayer & {
+            player: User;
+          }
+        >;
       }
     >;
   },
   filterByRole?: PlayerRole,
   filterByElo?: string,
 ) => {
-  const participants = tournament.participants.map((participant) => ({
-    ...mapPlayer(participant),
-    tournamentId: tournament.id,
-    kicked: tournament.kickedPlayers.some((kickedPlayer) => kickedPlayer.id === participant.id),
-  }));
+  const playersInTeamsAlready = tournament.teams.flatMap((t) => t.players).map((p) => p.playerId);
+
+  const participants = tournament.participants
+    .map((participant) => ({
+      ...mapPlayer(participant),
+      tournamentId: tournament.id,
+      kicked: tournament.kickedPlayers.some((kickedPlayer) => kickedPlayer.id === participant.id),
+    }))
+    .filter((participant) => !playersInTeamsAlready.includes(participant.id));
 
   const filterParticipants = participants.filter((participant) => {
     if (filterByRole && !participant.role.toLocaleLowerCase().includes(filterByRole.toLocaleLowerCase())) {
@@ -105,11 +110,6 @@ const mapTournament = (
     }
 
     return true;
-  });
-
-  console.info({
-    filterParticipants: filterParticipants.length,
-    participants: participants.length,
   });
 
   return {
