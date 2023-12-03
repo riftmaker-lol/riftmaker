@@ -50,7 +50,7 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
     SUPPORT: undefined,
   });
 
-  const [duration, setDuration] = useState<number>(10);
+  const [duration, setDuration] = useState<number>(3);
   const [running, setRunning] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectLane, setSelectedLane] = useState<Exclude<PlayerRole, 'FILL'> | undefined>(undefined);
@@ -76,8 +76,7 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
       elo: values.elo,
       player: undefined,
     });
-    setDuration(values.duration ?? 10);
-
+    setDuration(values.duration ?? 3);
     toast({
       title: 'Roulette Configured',
       description: 'The roulette has been configured and is ready to spin!',
@@ -140,7 +139,7 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
         )}
       >
         <MdOutlineRefresh className="w-4 h-4" />
-        Pick Random
+        Roulette Draft
       </DialogTrigger>
       <DialogContent className="max-w-3xl gap-8 text-center" loading={loading}>
         <DialogHeader>

@@ -138,11 +138,11 @@ const CreateTeam = ({ tournament }: CreateTeamProps) => {
     <Dialog>
       <DialogTrigger className={cn(buttonVariants({}), 'items-center gap-2')}>
         <AiOutlineTeam className="w-4 h-4" />
-        Create Team
+        Draft Team
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Team</DialogTitle>
+          <DialogTitle>Draft Team</DialogTitle>
           <DialogDescription className="text-sm">
             Either generate a random team in the same elo or create a fully random team.
           </DialogDescription>

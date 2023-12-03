@@ -2,16 +2,17 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { TournamentData } from '@/app/api/tournament/[tournamentId]/route';
+import { TournamentData } from '@/app/api/tournament/[tournamentId]/shuffle/route';
 import { cn } from '@/lib/utils';
-import { useRef } from 'react';
-import { GiRollingDices } from 'react-icons/gi';
-import { useQuery } from 'react-query';
-import { Button } from '../ui/button';
-import { ChevronUpIcon, LockClosedIcon } from '@radix-ui/react-icons';
-import { IoRefreshCircle, IoRefreshOutline } from 'react-icons/io5';
-import { useRoulette } from '../../hooks/useRoulette';
 import { PlayerRole } from '@prisma/client';
+import { ChevronUpIcon, LockClosedIcon } from '@radix-ui/react-icons';
+import { useEffect, useRef } from 'react';
+import { GiRollingDices } from 'react-icons/gi';
+import { IoRefreshOutline } from 'react-icons/io5';
+import { useQuery } from 'react-query';
+import { useRoulette } from '../../hooks/useRoulette';
+import { Button } from '../ui/button';
+import { toast } from '../ui/use-toast';
 
 interface RouletteProps {
   tournamentId: string;
@@ -69,6 +70,16 @@ const Roulette = ({
   const lockIn = () => {
     onLockIn(winner);
   };
+
+  useEffect(() => {
+    if (data?.message) {
+      toast({
+        title: 'Warning',
+        description: data.message,
+        variant: 'warning',
+      });
+    }
+  }, [data?.message]);
 
   return (
     <div className="flex flex-col w-full relative justify-center gap-4 items-center overflow-x-hidden">
