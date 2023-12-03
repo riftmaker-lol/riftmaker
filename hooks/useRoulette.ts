@@ -1,6 +1,7 @@
 import { useAnimationFrame } from 'framer-motion';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { Player } from '../components/molecules/roulette';
+import { toast } from '@/components/ui/use-toast';
 
 interface useRouletteProps {
   wrapperRef: RefObject<HTMLDivElement>;
@@ -61,6 +62,15 @@ export const useRoulette = ({
   });
 
   const startRoulette = (selectedItem: number) => {
+    if (items.length === 0) {
+      toast({
+        title: 'No players',
+        description: 'Please add more players before rerolling',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setLevel(0);
     setProgress(0);
     setWinnerItem(selectedItem);

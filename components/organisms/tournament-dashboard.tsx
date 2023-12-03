@@ -68,25 +68,17 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
         </TabsList>
 
         <TabsContent value="teams" className="w-full flex-grow py-8">
-          {!([TournamentStatus.CREATED, TournamentStatus.ACCEPTING_PARTICIPANTS] as TournamentStatus[]).includes(
-            tournament.status,
-          ) && (
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-row gap-4 justify-between items-center">
-                <h3 className="text-3xl font-semibold">Teams:</h3>
-                <div className="space-x-2">
-                  {tournament.status === TournamentStatus.READY && (
-                    <>
-                      <CreateTeam tournament={tournament} />
-                      <PickRandom tournamentId={tournamentId} open={open} onOpenChange={setOpen} />
-                    </>
-                  )}
-                </div>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-row gap-4 justify-between items-center">
+              <h3 className="text-3xl font-semibold">Teams:</h3>
+              <div className="space-x-2">
+                <CreateTeam tournament={tournament} />
+                <PickRandom tournamentId={tournamentId} open={open} onOpenChange={setOpen} />
               </div>
-
-              <TeamsTable data={tournament.teams} />
             </div>
-          )}
+
+            <TeamsTable data={tournament.teams} />
+          </div>
         </TabsContent>
         <TabsContent value="participants" className="w-full flex-grow py-8">
           <div className="flex flex-col gap-4">

@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: TournamentPageProps) {
   });
 
   return {
-    title: `Riftmaker | Manage Tournament ${tournament?.name ?? ''}}`,
+    title: `You are invited ${tournament?.name ?? ''} tournament by ${tournament?.createdBy.name ?? ''} | Riftmaker`,
   };
 }
 

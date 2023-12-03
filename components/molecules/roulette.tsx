@@ -73,7 +73,7 @@ const Roulette = ({
   return (
     <div className="flex flex-col w-full relative justify-center gap-4 items-center overflow-x-hidden">
       <p>Picking from {items.length} players</p>
-      <div className="flex flex-row gap-4 w-[480px] h-28 relative overflow-hidden" ref={wrapperRef}>
+      <div className="flex flex-row gap-4 w-[480px] h-32 relative overflow-hidden" ref={wrapperRef}>
         {Array.from({ length: 6 }, (_, i) => (
           <div key={i} className="w-24 h-24 inline-block absolute" data-value={0}>
             <div>Player {i + 0}</div>

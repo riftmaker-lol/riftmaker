@@ -65,10 +65,17 @@ export const endTournament = async (id: string) => {
       where: {
         id,
       },
+      include: {
+        createdBy: true,
+      },
     });
 
     if (!tournament) {
       return { message: 'Not found' };
+    }
+
+    if (tournament.createdBy.id !== user.id) {
+      return { message: 'You are not the creator of this tournament' };
     }
 
     const updatedTournament = await prisma.tournament.update({

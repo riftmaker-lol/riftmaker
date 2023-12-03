@@ -53,6 +53,7 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
   const [duration, setDuration] = useState<number>(10);
   const [running, setRunning] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectLane, setSelectedLane] = useState<Exclude<PlayerRole, 'FILL'> | undefined>(undefined);
 
   const [current, setCurrent] = useState<{
     elo: z.infer<typeof formSchema>['elo'];
@@ -84,8 +85,11 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
   };
 
   const nextUnfilledRole = useMemo(() => {
-    return Object.entries(team).find(([_, player]) => !player)?.[0] as Exclude<PlayerRole, 'FILL'> | undefined;
-  }, [team]);
+    if (!selectLane) {
+      return Object.entries(team).find(([_, player]) => !player)?.[0] as Exclude<PlayerRole, 'FILL'> | undefined;
+    }
+    return selectLane;
+  }, [selectLane, team]);
 
   const teamFull = useMemo(() => {
     return Object.values(team).every((player) => player !== undefined);
@@ -164,6 +168,10 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
               role={lane}
               player={team[lane]}
               onRemove={() => setTeam((prev) => ({ ...prev, [lane]: undefined }))}
+              selected={selectLane === lane}
+              onSelect={(lane) => {
+                setSelectedLane(lane);
+              }}
             />
           ))}
         </div>
@@ -205,6 +213,7 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
                   [role]: player,
                 };
               });
+              setSelectedLane(undefined);
             }}
           />
         )}
@@ -220,7 +229,7 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
                     name="elo"
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={running}>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger className=" w-full">
                               <SelectValue placeholder="Select an elo" />
@@ -244,7 +253,6 @@ const PickRandom = ({ tournamentId, open, onOpenChange }: PickRandomProps) => {
                   <Label className="flex-grow">Roulette Duration (s)</Label>
                   <FormField
                     control={form.control}
-                    disabled={running}
                     name="duration"
                     render={({ field }) => (
                       <FormItem>
