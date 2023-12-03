@@ -9,6 +9,7 @@ export const env = createEnv({
     DISCORD_CLIENT_SECRET: z.string().min(1),
     TWITCH_CLIENT_ID: z.string().min(1),
     TWITCH_CLIENT_SECRET: z.string().min(1),
+    THRESHOLD: z.number().int().min(1).default(3),
   },
   client: {
     NEXT_PUBLIC_BASE_URL: z.string().min(1),

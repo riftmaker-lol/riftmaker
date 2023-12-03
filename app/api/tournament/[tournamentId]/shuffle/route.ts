@@ -1,3 +1,4 @@
+import { env } from '@/env.mjs';
 import { mapPlayer } from '@/lib/draft';
 import prisma from '@/lib/prisma';
 import { PlayerRole, Team, TeamPlayer, Tournament, User } from '@prisma/client';
@@ -115,10 +116,10 @@ const mapTournament = (
   return {
     ...tournament,
     message:
-      filterParticipants.length < 1
+      filterParticipants.length < env.THRESHOLD
         ? `Not enough players with elo: ${filterByElo}, using all participants instead.`
         : undefined,
-    participants: shuffle(filterParticipants.length < 1 ? participants : filterParticipants), // TODO: document this
+    participants: shuffle(filterParticipants.length < env.THRESHOLD ? participants : filterParticipants), // TODO: document this
     kickedPlayers: tournament.kickedPlayers.map((participant) => ({
       ...mapPlayer(participant),
       tournamentId: tournament.id,
