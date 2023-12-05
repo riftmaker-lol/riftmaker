@@ -1,0 +1,25 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18.18'
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install caprover
+        run: sudo npm install -g caprover
+
+      - name: Create tar
+        run: tar -cvf ./deploy.tar --exclude='node_modules' --exclude='.git' --exclude='.next' *
+
+      - name: Deploy
+        run: caprover deploy -h ${{ secrets.CAPROVER_SERVER_PROD }} -p ${{ secrets.CAPROVER_PASSWORD_PROD }} -a riftmaker -t ./deploy.tar
