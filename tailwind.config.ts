@@ -18,6 +18,7 @@ module.exports = {
         lol: ['var(--font-beaufortfor-lol)', ...fontFamily.sans],
       },
       colors: {
+        discord: '#7289da',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

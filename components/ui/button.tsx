@@ -17,6 +17,7 @@ const buttonVariants = cva(
         ghost: '',
         link: 'text-primary underline-offset-4 hover:underline',
         accent: 'bg-accent text-accent-foreground shadow-sm hover:bg-accent/90',
+        discord: 'bg-discord text-white shadow-sm hover:bg-discord/90',
       },
       size: {
         default: 'h-9 px-4 py-2',
