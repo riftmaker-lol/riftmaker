@@ -115,10 +115,11 @@ const mapTournament = (
 
   return {
     ...tournament,
-    message:
-      filterParticipants.length < env.THRESHOLD
+    message: filterByElo
+      ? filterParticipants.length < env.THRESHOLD
         ? `Not enough players with elo: ${filterByElo}, using all participants instead.`
-        : undefined,
+        : undefined
+      : undefined,
     participants: shuffle(filterParticipants.length < env.THRESHOLD ? participants : filterParticipants), // TODO: document this
     kickedPlayers: tournament.kickedPlayers.map((participant) => ({
       ...mapPlayer(participant),
