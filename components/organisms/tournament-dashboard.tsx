@@ -47,9 +47,13 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
         {tournament.status !== TournamentStatus.FINISHED && <TournamentControls tournament={tournament} />}
       </div>
 
-      {([TournamentStatus.CREATED, TournamentStatus.ACCEPTING_PARTICIPANTS] as TournamentStatus[]).includes(
-        tournament.status,
-      ) && <InviteLink tournament={tournament} />}
+      {(
+        [
+          TournamentStatus.CREATED,
+          TournamentStatus.ACCEPTING_PARTICIPANTS,
+          TournamentStatus.READY,
+        ] as TournamentStatus[]
+      ).includes(tournament.status) && <InviteLink tournament={tournament} />}
 
       <Tabs defaultValue="participants" className="w-full h-full">
         <TabsList className="h-12 px-2 gap-4">
