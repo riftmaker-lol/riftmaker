@@ -32,6 +32,7 @@ const PlayerSlot = ({ role, player, selected, onSelect, onRemove }: PlayerSlotPr
             />
           </span>
           <span className="text-sm text-gray-500">{player.name}</span>
+          <span className="text-sm text-gray-500">{player.elo}</span>
         </div>
       ) : (
         <div className="h-4" />
