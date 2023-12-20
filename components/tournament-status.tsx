@@ -11,7 +11,7 @@ interface StatusProps {
 
 const Status = ({ status, className, size = 'lg' }: StatusProps) => {
   const baseStyling = cn(
-    'flex text-gray-500 gap-2 items-center justify-center rounded-full border border-2',
+    'flex text-gray-500 gap-2 items-center justify-center rounded-full border border-2 h-fit',
     className,
     {
       'py-1 px-4': size === 'lg',

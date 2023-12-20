@@ -82,6 +82,9 @@ module.exports = {
         'infinite-scroll': 'infinite-scroll 10s linear infinite',
         'infinite-scroll-reverse': 'infinite-scroll-reverse 10s linear infinite',
       },
+      transitionDuration: {
+        '3000': '3000ms',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

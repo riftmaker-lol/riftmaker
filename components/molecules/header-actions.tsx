@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
 import { Session } from 'next-auth';
+import { PiStarFourFill } from 'react-icons/pi';
 
 const Actions = ({ session }: { session: Session | null }) => {
   const router = useRouter();
@@ -20,7 +21,7 @@ const Actions = ({ session }: { session: Session | null }) => {
   return (
     <div className="flex">
       {session.user.isAdmin && (
-        <Button variant={'outline'} onClick={() => router.push('/dashboard')}>
+        <Button variant={'outline'} onClick={() => router.push('/dashboard')} icon={<PiStarFourFill />}>
           Dashboard
         </Button>
       )}

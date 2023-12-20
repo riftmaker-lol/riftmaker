@@ -5,13 +5,12 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 
-import './globals.css';
-import Header from '@/components/organisms/header';
 import Footer from '@/components/organisms/footer';
+import Header from '@/components/organisms/header';
+import './assets/globals.scss';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-
-const beaufortfor_lol = localFont({
+const beaufortforLOL = localFont({
   src: [
     {
       path: './fonts/BeaufortforLOL/BeaufortforLOL-Light.ttf',
@@ -77,10 +76,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body
         className={cn(
-          'bg-background font-sans antialiased min-h-screen flex items-center flex-col',
+          'bg-background font-sans antialiased min-h-screen flex items-center flex-col relative overflow-hidden',
           inter.variable,
-          beaufortfor_lol.variable,
-          beaufortfor_lol.className,
+          beaufortforLOL.variable,
+          beaufortforLOL.className,
         )}
         suppressHydrationWarning
       >

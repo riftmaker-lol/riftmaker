@@ -39,7 +39,7 @@ export const sortByPlayerElo = (a: { elo: string }, b: { elo: string }) => {
   const bIndex = orderedRanks.indexOf(strippedB as string);
 
   if (aIndex === bIndex) {
-    return aElo > bElo ? -1 : 1;
+    return aElo < bElo ? -1 : 1;
   }
 
   return aIndex > bIndex ? -1 : 1;

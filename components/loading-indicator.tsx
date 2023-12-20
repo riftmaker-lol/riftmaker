@@ -65,7 +65,7 @@ const LoadingLogo = ({ className }: Omit<LoadingIndicatorProps, 'variant'>) => {
 const LoadingSpinner = ({ className }: Omit<LoadingIndicatorProps, 'variant'>) => {
   return (
     <svg
-      className={cn('animate-spin duration-[3000]', className)}
+      className={cn('animate-spin duration-3000', className)}
       width="65"
       height="65"
       viewBox="0 0 65 65"

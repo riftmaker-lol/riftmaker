@@ -46,18 +46,14 @@ const Tournament = async ({ params }: TournamentPageProps) => {
 
   return (
     <main className="flex flex-col gap-8 px-24 items-center my-auto w-full">
-      <div className="flex flex-row gap-4 justify-center">
-        <div className="space-y-4">
-          <h1 className="text-[64px] text-center">
-            You were invited to {tournament.createdBy.name}&apos;s tournament <br />
-            <b>{tournament.name}</b>
-          </h1>
-          <div className="flex flex-row gap-4 justify-center items-center">
-            <pre>{tournament.id}</pre>
-            <span>-</span>
-            <Status status={tournament.status} />
-          </div>
+      <div className="flex flex-col gap-4 justify-center items-center text-[64px] text-center">
+        <h1>
+          You were invited to {tournament.createdBy.name}&apos;s tournament <br />
+        </h1>
+        <div className="flex gap-4 items-center justify-center">
+          <b>{tournament.name}</b>
         </div>
+        <Status status={tournament.status} className="text-base" />
       </div>
       {!session && <NotLoggedIn />}
       {session && (
