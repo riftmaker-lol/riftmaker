@@ -20,6 +20,9 @@ const Dashboard = async () => {
         participants: true,
         createdBy: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     })) ?? [];
 
   const mapTournament = (tournament: (typeof tournaments)[0]) => ({

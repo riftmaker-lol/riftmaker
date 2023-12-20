@@ -20,7 +20,7 @@ export const sortByStatus = (
   const bIndex = orderedEnum.indexOf(bStatus);
 
   if (aIndex === bIndex) {
-    return aCreatedAt > bCreatedAt ? 1 : -1;
+    return aCreatedAt < bCreatedAt ? 1 : -1;
   }
 
   return aIndex > bIndex ? 1 : -1;

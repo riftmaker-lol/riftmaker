@@ -13,6 +13,8 @@ import TournamentControls from '../molecules/tournament-controls';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LuSwords, LuUsers2, LuUserX } from 'react-icons/lu';
 import Status from '../tournament-status';
+import { TbTournament } from 'react-icons/tb';
+import Brackets from './brackets';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,19 +24,18 @@ const queryClient = new QueryClient({
   },
 });
 
-const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string }) => {
-  const [open, setOpen] = useState(false);
+interface TournamentDashboardProps {
+  tournamentId: string;
+}
 
+const TournamentDashboardConsumer = ({ tournamentId }: TournamentDashboardProps) => {
+  const [open, setOpen] = useState(false);
   const { error, data } = useQuery(
     'tounament',
     () => fetch(`/api/tournament/${tournamentId}`).then((res) => res.json()),
-    {
-      refetchInterval: 5_000,
-    },
+    { refetchInterval: 5_000 },
   );
-
   if (error) return 'An error has occurred: ' + (error as Error).message;
-
   const tournament = data as TournamentData;
 
   return (
@@ -65,6 +66,10 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
             <LuSwords className="w-4 h-4 mr-2" />
             Teams
           </TabsTrigger>
+          <TabsTrigger className="uppercase text-xl" value="brackets">
+            <TbTournament className="w-4 h-4 mr-2" />
+            Brackets
+          </TabsTrigger>
           <TabsTrigger className="uppercase text-xl" value="blacklisted">
             <LuUserX className="w-4 h-4 mr-2" />
             Blacklisted
@@ -80,14 +85,12 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
                 <PickRandom tournamentId={tournamentId} open={open} onOpenChange={setOpen} />
               </div>
             </div>
-
             <TeamsTable data={tournament.teams} />
           </div>
         </TabsContent>
         <TabsContent value="participants" className="w-full flex-grow py-8">
           <div className="flex flex-col gap-4">
             <h3 className="text-3xl font-semibold">Participants:</h3>
-
             <ParticipantsTable data={tournament.participants} />
           </div>
         </TabsContent>
@@ -97,12 +100,20 @@ const TournamentDashboardConsumer = ({ tournamentId }: { tournamentId: string })
             <ParticipantsTable data={tournament.kickedPlayers} />
           </div>
         </TabsContent>
+        <TabsContent value="brackets" className="w-full flex-grow py-8">
+          <div className="flex flex-row gap-4 justify-between items-center">
+            <h3 className="text-3xl font-semibold">Brackets:</h3>
+            <div className="space-x-2">
+              <Brackets tournament={tournament} />
+            </div>
+          </div>
+        </TabsContent>
       </Tabs>
     </div>
   );
 };
 
-const TournamentDashboard = ({ tournamentId }: { tournamentId: string }) => {
+const TournamentDashboard = ({ tournamentId }: TournamentDashboardProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <TournamentDashboardConsumer tournamentId={tournamentId} />
