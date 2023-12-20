@@ -1,67 +1,71 @@
-export interface SummonerData {
+export interface SummonerProfile {
+  data: SummonerProfileData;
+}
+
+export interface SummonerProfileData {
+  fetchProfileRanks: FetchProfileRanks;
+}
+
+export interface FetchProfileRanks {
+  rankScores: RankScore[];
+}
+
+export interface RankScore {
+  lastUpdatedAt: any;
+  losses: number;
+  lp: number;
+  promoProgress: any;
+  queueType: string;
+  rank: string;
+  role: any;
+  seasonId: number;
+  tier: string;
+  wins: number;
+}
+
+export interface RecentRoles {
   data: Data;
 }
 
 export interface Data {
-  lol: Lol;
+  recentRoleRates: RecentRoleRates;
 }
 
-export interface Lol {
-  player: Player;
+export interface RecentRoleRates {
+  adc: Adc;
+  jungle: Jungle;
+  mid: Mid;
+  none: None;
+  supp: Supp;
+  top: Top;
 }
 
-export interface Player {
-  aId: string;
-  icon: string;
-  queuesStats: QueuesStats;
-  roleStats: RoleStats;
+export interface Adc {
+  gameCount: number;
+  winCount: number;
 }
 
-export interface QueuesStats {
-  items: QueueStat[];
+export interface Jungle {
+  gameCount: number;
+  winCount: number;
 }
 
-export interface QueueStat {
-  rank: Rank;
-  queue: string;
-  lp: number;
-  wins: number;
-  winrate: number;
-  gamesCount: number;
-  losses: number;
+export interface Mid {
+  gameCount: number;
+  winCount: number;
 }
 
-export interface Rank {
-  tier: string;
-  division: string;
+export interface None {
+  gameCount: number;
+  winCount: number;
 }
 
-export interface RoleStats {
-  filters: Filters;
-  defaultRole: DefaultRole;
+export interface Supp {
+  gameCount: number;
+  winCount: number;
 }
 
-export interface Filters {
-  actual: Actual;
-}
-
-export interface Actual {
-  queue: string;
-  rolename: string;
-}
-
-export interface DefaultRole {
-  wins: number;
-  looses: number;
-  kda: Kda;
-  csm: number;
-  kp: number;
-  lp: number;
-}
-
-export interface Kda {
-  k: number;
-  d: number;
-  a: number;
-  __typename: string;
+export interface Top {
+  gameCount: number;
+  winCount: number;
 }
