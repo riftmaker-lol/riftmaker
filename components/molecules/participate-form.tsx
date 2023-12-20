@@ -14,7 +14,7 @@ import { Label } from '@radix-ui/react-label';
 import { useState } from 'react';
 
 const formSchema = z.object({
-  riotId: z.custom<`${string}#${string}`>((val) => {
+  riotId: z.custom<`${string}#${string}` | string>((val) => {
     return typeof val === 'string' && val.includes('#') && val.length > 3;
   }, "Riot ID must be in the format 'hamid#1234'"),
 });

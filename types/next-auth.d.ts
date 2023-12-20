@@ -7,7 +7,7 @@ declare module 'next-auth' {
       isAdmin: boolean;
       elo: string;
       role: PlayerRole;
-      riotId: `${string}#${string}`;
+      riotId: string;
     } & DefaultSession['user'];
   }
 }
