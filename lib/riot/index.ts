@@ -88,12 +88,26 @@ const getRole = (recentRoles: RecentRoles) => {
   return PlayerRole[mainRole == 'none' ? PlayerRole.FILL : (mainRole as keyof typeof PlayerRole)];
 };
 
+const mapRankToDigit = (rank: string) => {
+  switch (rank.toUpperCase()) {
+    case 'III':
+      return 3;
+    case 'II':
+      return 2;
+    case 'I':
+      return 1;
+    case 'IV':
+    default:
+      return rank;
+  }
+};
+
 const getRank = (profile: SummonerProfile) => {
   const rankScores = profile.data.fetchProfileRanks.rankScores;
 
   for (const score of rankScores) {
     if (score.queueType === 'ranked_solo_5x5') {
-      return `${score.tier} ${score.rank}`.toUpperCase();
+      return `${score.tier} ${mapRankToDigit(score.rank)}`.toUpperCase();
     }
   }
 
