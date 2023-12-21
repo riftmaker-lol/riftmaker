@@ -8,7 +8,7 @@ const Home = async () => {
     <>
       <Vector1 className="vector1" />
       <Vector2 className="vector2" />
-      <main className="flex flex-col h-[80vh] items-center p-24 container z-10">
+      <main className="flex flex-col flex-grow items-center p-24 container z-10">
         <div className="flex flex-col gap-8 my-auto text-center justify-center items-center">
           <h1 className="text-[72px] font-bold font-lol my-auto leading-tight">
             Streamlined League of Legends Tournaments
