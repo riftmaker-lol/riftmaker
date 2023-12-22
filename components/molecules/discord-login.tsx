@@ -1,14 +1,28 @@
+'use client';
+
 import { signIn } from 'next-auth/react';
-import { useParams } from 'next/navigation';
+import { redirect, useParams, useSearchParams } from 'next/navigation';
 import { FaDiscord } from 'react-icons/fa';
 import { Button } from '../ui/button';
+import { Session } from 'next-auth';
 
-const DiscordLogin = () => {
+interface DiscordLoginProps {
+  session: Session | null;
+}
+
+const DiscordLogin = ({ session }: DiscordLoginProps) => {
   const { tournamentId } = useParams();
+  const params = useSearchParams();
 
-  if (!tournamentId) return null;
+  const defaultRedirectTo = tournamentId ? `/tournament/${tournamentId}` : '/';
+  const callbackUrl = params.get('callbackUrl') ?? defaultRedirectTo;
+
+  if (session) {
+    return redirect(callbackUrl);
+  }
+
   return (
-    <Button onClick={() => signIn('discord', { callbackUrl: `/tournament/${tournamentId}` })}>
+    <Button variant={'discord'} onClick={() => signIn('discord', { callbackUrl: callbackUrl })}>
       <FaDiscord className="mr-2 w-4 h-4" />
       <span>Sign in with Discord</span>
     </Button>

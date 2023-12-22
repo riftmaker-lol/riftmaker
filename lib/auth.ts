@@ -27,7 +27,9 @@ export const authOptions: AuthOptions = {
     //   },
     // }),
   ],
-
+  pages: {
+    signIn: '/auth/signin',
+  },
   callbacks: {
     session: async ({ session, user }) => {
       session.user = {
@@ -38,6 +40,12 @@ export const authOptions: AuthOptions = {
         riotId: (user as User).riotId ?? '',
       };
       return session;
+    },
+    redirect({ url, baseUrl }) {
+      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+      else if (url.startsWith('riftmaker://')) return url;
+      return baseUrl;
     },
   },
 };
