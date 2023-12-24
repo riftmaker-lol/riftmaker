@@ -13,19 +13,6 @@ export const authOptions: AuthOptions = {
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
     }),
-    // TwitchProvider({
-    //   clientId: env.TWITCH_CLIENT_ID,
-    //   clientSecret: env.TWITCH_CLIENT_SECRET,
-    //   profile(profile) {
-    //     return {
-    //       id: profile.sub,
-    //       name: profile.preferred_username,
-    //       email: profile.email,
-    //       image: profile.profile_image_url,
-    //       twitchUsername: profile.preferred_username,
-    //     };
-    //   },
-    // }),
   ],
   pages: {
     signIn: '/auth/signin',

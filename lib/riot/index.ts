@@ -128,8 +128,10 @@ export const validateRiotId = async (
     const seasonId = await getSeasonId();
     const { profile, recentRoles } = await summonerProfile(riotUserName, riotTagLine, 'euw1', seasonId);
 
-    const role = getRole(await recentRoles);
-    const elo = getRank(await profile);
+    console.log(profile, recentRoles);
+
+    const role = getRole(recentRoles);
+    const elo = getRank(profile);
 
     return {
       riotId,
