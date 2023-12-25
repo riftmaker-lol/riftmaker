@@ -15,6 +15,8 @@ import { LuSwords, LuUsers2, LuUserX } from 'react-icons/lu';
 import Status from '../tournament-status';
 import { TbTournament } from 'react-icons/tb';
 import Brackets from './brackets';
+import api from '@/lib/api';
+import CreateBracket from '../molecules/create-bracket';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,13 +32,13 @@ interface TournamentDashboardProps {
 
 const TournamentDashboardConsumer = ({ tournamentId }: TournamentDashboardProps) => {
   const [open, setOpen] = useState(false);
-  const { error, data } = useQuery(
-    'tounament',
-    () => fetch(`/api/tournament/${tournamentId}`).then((res) => res.json()),
-    { refetchInterval: 5_000 },
-  );
+  const { error, data } = useQuery('tounament', () => api.get<TournamentData>(`/api/tournament/${tournamentId}`), {
+    refetchInterval: 5_000,
+  });
+
   if (error) return 'An error has occurred: ' + (error as Error).message;
-  const tournament = data as TournamentData;
+
+  const tournament = data!.data;
 
   return (
     <div className="flex flex-col gap-8">
@@ -101,8 +103,11 @@ const TournamentDashboardConsumer = ({ tournamentId }: TournamentDashboardProps)
           </div>
         </TabsContent>
         <TabsContent value="brackets" className="w-full flex-grow py-8">
-          <div className="flex flex-row gap-4 justify-between items-center">
-            <h3 className="text-3xl font-semibold">Brackets:</h3>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-row gap-4 justify-between items-center">
+              <h3 className="text-3xl font-semibold">Brackets:</h3>
+              <CreateBracket tournament={tournament} />
+            </div>
             <div className="space-x-2">
               <Brackets tournament={tournament} />
             </div>

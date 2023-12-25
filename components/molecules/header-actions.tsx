@@ -19,7 +19,7 @@ const Actions = ({ session }: { session: Session | null }) => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex z-50">
       {session.user.isAdmin && (
         <Button variant={'outline'} onClick={() => router.push('/dashboard')} icon={<PiStarFourFill />}>
           Dashboard

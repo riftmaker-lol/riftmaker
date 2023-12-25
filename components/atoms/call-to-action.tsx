@@ -17,7 +17,7 @@ const CallToAction = ({ className }: CallToActionProps) => {
     if (session?.user.isAdmin) {
       router.push('/dashboard');
     } else {
-      router.push('/api/auth/signin');
+      router.push('/auth/signin');
     }
   };
 

@@ -1,0 +1,65 @@
+{
+	// Place your snippets for typescriptreact here. Each snippet is defined under a snippet name and has a prefix, body and 
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+	// same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	
+	"React custom Context": {
+		"prefix": "reactcontext",
+		"body": [
+			"import { createContext } from 'react';",
+			"",
+			"",
+			"interface ContextProps {",
+			"    ${2:prop1}: ${3:boolean};",
+			"}",
+			"",
+			"",
+			"export const ${1:Name}Context = createContext({} as ContextProps );"
+
+		],
+		"description": "React custom Context with props"
+	},
+	"React custom Provider": {
+		"prefix": "reactprovider",
+		"body": [
+			"import { FC, useReducer } from 'react';",
+			"import { ${1:Name}Context, ${1:Name}Reducer } from './';",
+			"",
+			"export interface ${1:Name}State {",
+			"    ${2:property}: boolean;",
+			"}",
+			"",
+			"",
+			"const ${1:Name}_INITIAL_STATE: ${1:Name}State = {",
+			"    ${2:property}: false,",
+			"}",
+			"",
+			"",
+			"export const ${1:Name}Provider:FC = ({ children }) => {",
+			"",
+			"    const [state, dispatch] = useReducer( ${1:Name}Reducer , ${1:Name}_INITIAL_STATE );",
+			"",
+			"    return (",
+			"        <${1:Name}Context.Provider value={{",
+			"            ${2:property}: false",
+			"        }}>",
+			"            { children }",
+			"        </${1:Name}Context.Provider>",
+			"    )",
+			"};"
+		],
+		"description": "React custom Provider"
+	},
+
+	
+}

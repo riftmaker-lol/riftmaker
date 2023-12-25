@@ -115,6 +115,8 @@ model Tournament {
   updatedAt DateTime @updatedAt
 
   kickedPlayers User[] @relation("KickedPlayers")
+
+  stages Stage[] 
 }
 
 model Team {
@@ -189,9 +191,9 @@ enum MatchStatus {
 
 // The results of a participant in a match.
 model ParticipantMatchResult {
-  id            Int          @id @default(autoincrement())
+  id           String @id @default(cuid())
   // If `null`, the participant is to be determined.
-  participantId Int?
+  participantId String?
   participant   Participant? @relation(fields: [participantId], references: [id])
   // Indicates where the participant comes from.
   position      Int?
@@ -202,18 +204,18 @@ model ParticipantMatchResult {
   // Tells what is the result of a duel for this participant.
   result        MatchResult?
 
-  opponent1MatchId Int?   @unique
+  opponent1MatchId String?   @unique
   opponent1Match   Match? @relation("opponent1", fields: [opponent1MatchId], references: [id])
 
-  opponent2MatchId Int?   @unique
+  opponent2MatchId String?   @unique
   opponent2Match   Match? @relation("opponent2", fields: [opponent2MatchId], references: [id])
 }
 
 // The results of a participant in a match game.
 model ParticipantMatchGameResult {
-  id            Int          @id @default(autoincrement())
+  id            String @id @default(cuid())
   // If `null`, the participant is to be determined.
-  participantId Int?
+  participantId String?
   participant   Participant? @relation(fields: [participantId], references: [id])
   // Indicates where the participant comes from.
   position      Int?
@@ -224,10 +226,10 @@ model ParticipantMatchGameResult {
   // Tells what is the result of a duel for this participant.
   result        MatchResult?
 
-  opponent1MatchGameId Int?       @unique
+  opponent1MatchGameId String?       @unique
   opponent1MatchGame   MatchGame? @relation("opponent1", fields: [opponent1MatchGameId], references: [id])
 
-  opponent2MatchGameId Int?       @unique
+  opponent2MatchGameId String?       @unique
   opponent2MatchGame   MatchGame? @relation("opponent2", fields: [opponent2MatchGameId], references: [id])
 }
 
@@ -237,9 +239,9 @@ model ParticipantMatchGameResult {
 
 // A participant of a stage (team or individual).
 model Participant {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
-  tournamentId Int
+  tournamentId String
 
   // Name of the participant
   name String
@@ -252,9 +254,9 @@ model Participant {
 
 // A stage, which can be a round-robin stage or a single/double elimination stage.
 model Stage {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
-  tournamentId Int
+  tournamentId String
 
   // Name of the stage
   name String
@@ -276,15 +278,17 @@ model Stage {
   matches    Match[]
   // The match games of this stage
   matchGames MatchGame[]
+
+  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
 }
 
 // A group of a stage.
 model Group {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
   // ID of the parent stage.
-  stageId Int
-  stage   Stage @relation(fields: [stageId], references: [id])
+  stageId String
+  stage   Stage @relation(fields: [stageId], references: [id], onDelete: Cascade)
 
   // The number of the group in its stage
   number Int
@@ -298,15 +302,15 @@ model Group {
 
 // A round of a group.
 model Round {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
   // ID of the parent stage.
-  stageId Int
-  stage   Stage @relation(fields: [stageId], references: [id])
+  stageId String
+  stage   Stage @relation(fields: [stageId], references: [id], onDelete: Cascade)
 
   // ID of the parent group.
-  groupId Int
-  group   Group @relation(fields: [groupId], references: [id])
+  groupId String
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   // The number of the round in its group
   number Int
@@ -316,7 +320,7 @@ model Round {
 }
 
 model Match {
-  id Int @id @default(autoincrement())
+  id  String @id @default(cuid())
 
   // Status of the match.
   status MatchStatus
@@ -328,15 +332,15 @@ model Match {
   opponent2Result ParticipantMatchResult? @relation("opponent2")
 
   // ID of the parent stage.
-  stageId Int
-  stage   Stage @relation(fields: [stageId], references: [id])
+  stageId String
+  stage   Stage @relation(fields: [stageId], references: [id], onDelete: Cascade)
 
   // ID of the parent group.
-  groupId Int
-  group   Group @relation(fields: [groupId], references: [id])
+  groupId String
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
-  roundId Int
-  round   Round @relation(fields: [roundId], references: [id])
+  roundId String
+  round   Round @relation(fields: [roundId], references: [id], onDelete: Cascade)
 
   // The number of the match in its round
   number Int
@@ -349,7 +353,7 @@ model Match {
 }
 
 model MatchGame {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
   // Status of the match.
   status MatchStatus
@@ -361,12 +365,12 @@ model MatchGame {
   opponent2Result ParticipantMatchGameResult? @relation("opponent2")
 
   // ID of the parent stage.
-  stageId Int
-  stage   Stage @relation(fields: [stageId], references: [id])
+  stageId String
+  stage   Stage @relation(fields: [stageId], references: [id], onDelete: Cascade)
 
   // ID of the parent match.
-  matchId Int
-  match   Match @relation(fields: [matchId], references: [id])
+  matchId String
+  match   Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
 
   // The number of the match in its round
   number Int
@@ -378,10 +382,10 @@ model MatchGame {
 
 // The possible settings for a stage.
 model StageSettings {
-  id String @id @default(uuid()) @db.Uuid
+  id String @id @default(cuid())
 
-  stageId Int   @unique
-  stage   Stage @relation(fields: [stageId], references: [id])
+  stageId  String   @unique
+  stage   Stage @relation(fields: [stageId], references: [id], onDelete: Cascade)
 
   // The number of participants
   size Int?

@@ -1,3 +1,4 @@
+import manager from '@/lib/bracket';
 import { mapPlayer } from '@/lib/draft';
 import prisma from '@/lib/prisma';
 import { PlayerRole, Team, Tournament, User } from '@prisma/client';
@@ -57,12 +58,12 @@ export async function GET(
     );
   }
 
-  const data = mapTournament(tournament);
+  const data = await mapTournament(tournament);
 
   return NextResponse.json(data);
 }
 
-const mapTournament = (
+const mapTournament = async (
   tournament: Tournament & {
     participants: User[];
     kickedPlayers: User[];
@@ -77,6 +78,7 @@ const mapTournament = (
   },
 ) => ({
   ...tournament,
+  brackets: await manager.get.tournamentData(tournament.id),
   participants: tournament.participants.map((participant) => ({
     ...mapPlayer(participant),
     tournamentId: tournament.id,
@@ -102,4 +104,4 @@ const mapTournament = (
   })),
 });
 
-export type TournamentData = ReturnType<typeof mapTournament>;
+export type TournamentData = Awaited<ReturnType<typeof mapTournament>>;
